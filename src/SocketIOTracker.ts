@@ -31,6 +31,10 @@ const EVENTS_TO_IGNORE = [
   'pong',
 ];
 
+/**
+ * @fileoverview Bootstrap relevant hooks into a Socket.IO server instance,
+ * and track metrics over time.
+ */
 export class SocketIOTracker {
   public metrics: Metrics;
   public register: Registry;

@@ -1,6 +1,9 @@
 import { Counter, Gauge } from 'prom-client';
 import { Metrics } from './Metrics';
 
+/**
+ * @fileoverview Function for generating default metrics for the library.
+ */
 export function createMetrics(): Metrics {
   return {
     bytesReceivedTotal: new Counter({

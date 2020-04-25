@@ -1,4 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+/**
+ * @fileoverview Method for monkey-patching a hook to run before the existing
+ * logic for a method on an object prototype.
+ */
 export function hook(
   objectToHook: any,
   methodToHook: string,
