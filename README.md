@@ -2,14 +2,11 @@
 
 Track metrics for a Socket.IO server for use in Prometheus.
 
-Option | Default Value | Summary
-:--- | :--- | :---
-`collectDefaultMetrics` | `false` | Should the library also collect metrics recommended by Prometheus. See: https://github.com/siimon/prom-client#default-metrics
-
 # Contents
 1. [Intro](#socket.io-prometheus-tracker)
 2. [Examples](#examples)
     - [Basic Use](#basic-use)
+    - [Configuration](#configuration)
     - [Collecting Default Metrics](#collecting-default-metrics)
 3. [Metrics](#metrics)
 3. [Contributing](#contributing)
@@ -29,13 +26,17 @@ const ioPrometheus = require('socket.io-prometheus-tracker)(io);
 
 Metrics can then be accessed using: `ioPrometheus.register.metrics();`
 
-#### Collecting Default Metrics
+#### Configuration
 
-```
-const ioPrometheus = require('socket.io-prometheus-tracker)(io, true);
-```
+Option | Default Value | Summary
+:--- | :--- | :---
+`collectDefaultMetrics` | `false` | Should the library also collect metrics recommended by Prometheus. See: https://github.com/siimon/prom-client#default-metrics
 
 ## Metrics
+
+Below are all the default metrics available as part of the library. Note that
+this will be extended by additional fields if `collectDefaultMetrics` is
+enabled.
 
 Name | Labels | Summary
 :--- | :--- | :---
