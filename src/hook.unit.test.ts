@@ -37,6 +37,6 @@ describe('hook', () => {
 
     expect(returnValueAfterHook).toEqual(returnValueBeforeHook);
     expect(hookFunction).toHaveBeenCalledTimes(1);
-    expect(hookFunction.mock.calls[0][0]).toBe('one');
+    expect(hookFunction).toHaveBeenCalledWith('one');
   });
 });
