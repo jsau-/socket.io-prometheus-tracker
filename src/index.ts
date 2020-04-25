@@ -1,1 +1,2 @@
-export { SocketIOTracker } from './SocketIOTracker';
+import { SocketIOTracker } from './SocketIOTracker';
+export default SocketIOTracker;

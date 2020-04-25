@@ -1,29 +1,25 @@
+import { hook } from './hook';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function childHook(
   objectToHook: any,
   parentToHook: string,
   childToHook: string,
   hookFunc: Function,
-): any {
+): void {
   if (!objectToHook[parentToHook]) {
-    return undefined;
+    return;
   }
 
-  const parentResult =
-    'function' === typeof objectToHook[parentToHook] ?
-      objectToHook[parentToHook].apply(objectToHook, arguments) :
-      objectToHook[parentToHook];
+  const parentProperty = objectToHook[parentToHook];
 
-  if (!parentResult || !parentResult[childToHook]) {
-    return parentResult;
+  if ('function' === typeof parentProperty) {
+    objectToHook[parentToHook] = function(...args: any[]): any {
+      const parentResult = parentProperty.apply(this, args);
+      hook(parentResult, childToHook, hookFunc);
+      return parentResult;
+    };
+  } else {
+    hook(parentProperty, childToHook, hookFunc);
   }
-
-  const childMethod = parentResult[childToHook];
-
-  parentResult[childToHook] = (...args: any): any => {
-    hookFunc(...args);
-    childMethod.apply(parentResult, args);
-  };
-
-  return parentResult;
 }

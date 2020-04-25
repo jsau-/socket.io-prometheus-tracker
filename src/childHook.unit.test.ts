@@ -9,23 +9,7 @@ describe('childHook', () => {
     expect(Object.keys(objectToHook)).toEqual(initialKeys);
   });
 
-  it('Invokes parent if function', () => {
-    const parentReturn = { foo: 'bar' };
-    const parent = jest.fn(() => parentReturn);
-
-    const objectToHook = { parent };
-    const result = childHook(objectToHook, 'parent', 'child', () => {});
-    expect(parent).toHaveBeenCalledTimes(1);
-    expect(result).toBe(parentReturn);
-  });
-
-  it('Does not invoke parent if not function', () => {
-    const objectToHook = { parent: {} };
-    const result = childHook(objectToHook, 'parent', 'child', () => {});
-    expect(result).toBe(objectToHook.parent);
-  });
-
-  it('Invokes hook and child function on calling parent function', () => {
+  it('Invokes hook and child function on calling parent if function', () => {
     const hookFunc = jest.fn();
     const child = jest.fn();
 
@@ -33,8 +17,8 @@ describe('childHook', () => {
     const parent = jest.fn(() => parentReturn);
 
     const objectToHook = { parent };
-    const result = childHook(objectToHook, 'parent', 'child', hookFunc);
-    expect(result).toBe(parentReturn);
+
+    childHook(objectToHook, 'parent', 'child', hookFunc);
 
     objectToHook.parent().child('one');
 
@@ -45,14 +29,13 @@ describe('childHook', () => {
     expect(hookFunc).toHaveBeenCalledWith('one');
   });
 
-  it('Invokes hook and child function on calling parent non-function', () => {
+  it('Invokes hook and child function on calling parent if non-function', () => {
     const hookFunc = jest.fn();
     const child = jest.fn();
 
     const objectToHook = { parent: { child } };
 
-    const result = childHook(objectToHook, 'parent', 'child', hookFunc);
-    expect(result).toBe(objectToHook.parent);
+    childHook(objectToHook, 'parent', 'child', hookFunc);
 
     objectToHook.parent.child('one');
 

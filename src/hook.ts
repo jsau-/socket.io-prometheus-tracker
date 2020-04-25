@@ -4,7 +4,7 @@ export function hook(
   methodToHook: string,
   hookFunc: Function,
 ): any {
-  if (!objectToHook[methodToHook]) {
+  if (!objectToHook || !objectToHook[methodToHook]) {
     return;
   }
 
