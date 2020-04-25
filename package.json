@@ -1,0 +1,74 @@
+{
+  "name": "socket.io-prometheus-tracker",
+  "version": "0.0.1",
+  "description": "Prometheus metrics tracker for socket.io servers.",
+  "main": "index.js",
+  "scripts": {
+    "check:types": "tsc --noEmit",
+    "doc": "del-cli \"./docs/**/*\" && typedoc",
+    "prebuild": "npm run doc && del-cli \"./build/**/*\"",
+    "build:types": "tsc -p tsconfig.json --emitDeclarationOnly",
+    "build:js": "babel src --out-dir build --extensions \".ts,.tsx\"  --ignore \"src/**/*.test.ts\"",
+    "build": "npm run prebuild && npm run build:types && npm run build:js",
+    "lint": "./node_modules/.bin/eslint \"./src/**/*.ts\" --color",
+    "lint:fix": "./node_modules/.bin/eslint \"./src/**/*.ts\" --color --fix",
+    "precommit-message": "echo Executing pre-commit checks... && exit 0",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsau-/socket.io-prometheus-tracker.git"
+  },
+  "keywords": [
+    "prometheus",
+    "socket.io",
+    "socketio",
+    "metrics",
+    "tracker"
+  ],
+  "author": "Jon Saunders",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsau-/socket.io-prometheus-tracker/issues"
+  },
+  "homepage": "https://github.com/jsau-/socket.io-prometheus-tracker#readme",
+  "devDependencies": {
+    "@babel/cli": "7.4.4",
+    "@babel/core": "7.4.5",
+    "@babel/plugin-proposal-class-properties": "7.4.4",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "7.7.4",
+    "@babel/plugin-proposal-numeric-separator": "7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "7.7.7",
+    "@babel/preset-env": "7.4.5",
+    "@babel/preset-typescript": "7.7.7",
+    "@types/jest": "24.0.25",
+    "@types/node": "13.9.0",
+    "@typescript-eslint/eslint-plugin": "2.14.0",
+    "@typescript-eslint/parser": "2.14.0",
+    "awesome-typescript-loader": "5.2.1",
+    "babel-eslint": "10.0.3",
+    "babel-jest": "24.9.0",
+    "babel-loader": "^8.0.6",
+    "cross-env": "5.2.0",
+    "del-cli": "2.0.0",
+    "eslint": "6.6.0",
+    "eslint-config-prettier": "5.0.0",
+    "eslint-plugin-prettier": "3.1.2",
+    "jest": "24.9.0",
+    "jest-html-reporter": "2.8.0",
+    "pre-commit": "1.2.2",
+    "prettier": "1.19.1",
+    "ts-jest": "24.2.0",
+    "typedoc": "0.15.6",
+    "typescript": "3.7.4"
+  },
+  "dependencies": {
+    "prom-client": "^12.0.0",
+    "socket.io": "^2.2.0"
+  },
+  "pre-commit": [
+    "precommit-message",
+    "lint",
+    "build"
+  ]
+}
