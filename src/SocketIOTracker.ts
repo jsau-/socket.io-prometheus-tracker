@@ -3,7 +3,6 @@ import {
   collectDefaultMetrics as prometheusCollectDefaultMetrics,
   register as prometheusDefaultRegister,
 } from 'prom-client';
-import * as io from 'socket.io';
 import { Metrics } from './Metrics';
 import { SocketIOEventPacket } from './SocketIOEventPacket';
 import { createMetrics } from './createMetrics';
@@ -11,11 +10,11 @@ import { getByteSize } from './getByteSize';
 import { hook } from './hook';
 
 export class SocketIOTracker {
-  private metrics: Metrics;
+  public metrics: Metrics;
 
   public register: Registry;
 
-  constructor(ioServer: io.Server, collectDefaultMetrics = false) {
+  constructor(ioServer: NodeJS.EventEmitter, collectDefaultMetrics = false) {
     this.metrics = createMetrics();
 
     this.register = prometheusDefaultRegister;
@@ -27,8 +26,9 @@ export class SocketIOTracker {
     this.bindHandlers(ioServer);
   }
 
-  private bindHandlers(ioServer: io.Server): void {
-    ioServer.on('connect', (socket: io.Socket) => {
+  private bindHandlers(ioServer: NodeJS.EventEmitter): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ioServer.on('connect', (socket: any) => {
       this.metrics.connectsCurrent.inc();
       this.metrics.connectsTotal.inc();
 

@@ -4,13 +4,13 @@ module.exports = {
     collectCoverage: true,
     collectCoverageFrom: [
       './src/**/*.+(ts)',
-
+      '!./src/index.ts',
     ],
     coverageThreshold: {
       global: {
-        branches: 100,
-        functions: 100,
-        lines: 100,
+        branches: 75,
+        functions: 75,
+        lines: 75,
         statements: -1,
       },
     },
