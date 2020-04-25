@@ -32,7 +32,7 @@ module.exports = {
       'consistent-return': 'error',
       'default-case': 'error',
       'eol-last': ['error', 'always'],
-      'id-blacklist': ['error', 'data', 'err', 'e', 'cb', 'callback'],
+      'id-blacklist': ['error', 'err', 'e', 'cb', 'callback'],
       'implicit-arrow-linebreak': ['off'],
       indent: ['error', 2, { SwitchCase: 1 }],
       'line-comment-position': ['error', { position: 'above' }],

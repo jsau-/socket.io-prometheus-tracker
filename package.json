@@ -2,7 +2,7 @@
   "name": "socket.io-prometheus-tracker",
   "version": "0.0.1",
   "description": "Prometheus metrics tracker for socket.io servers.",
-  "main": "index.js",
+  "main": "./build/index.js",
   "scripts": {
     "check:types": "tsc --noEmit",
     "doc": "del-cli \"./docs/**/*\" && typedoc",
@@ -43,6 +43,7 @@
     "@babel/preset-typescript": "7.7.7",
     "@types/jest": "24.0.25",
     "@types/node": "13.9.0",
+    "@types/socket.io": "2.1.4",
     "@typescript-eslint/eslint-plugin": "2.14.0",
     "@typescript-eslint/parser": "2.14.0",
     "awesome-typescript-loader": "5.2.1",
