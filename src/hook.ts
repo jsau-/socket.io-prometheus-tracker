@@ -12,6 +12,6 @@ export function hook(
 
   objectToHook[methodToHook] = (...args: any): any => {
     hookFunc(...args);
-    return originalMethod.apply(objectToHook, ...args);
+    return originalMethod.apply(objectToHook, [...args]);
   };
 }
