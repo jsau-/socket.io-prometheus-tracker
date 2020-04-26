@@ -41,6 +41,18 @@ export class SocketIOTracker {
   private options: SocketIOTrackerOptions;
   public register: Registry;
 
+  /**
+   * @param ioServer - The Socket.IO server instance to track metrics for.
+   * @param options - Optional configuration parameters for the tracker
+   * instance.
+   * @example
+   * ```javascript
+   * const ioPrometheus = new SocketIOTracker(
+   *   io,
+   *   { collectDefaultMetrics: true },
+   * );
+   * ```
+   */
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ioServer: any,
@@ -60,6 +72,12 @@ export class SocketIOTracker {
     this.bindHandlers(ioServer);
   }
 
+  /**
+   * Bind relevant handlers/hooks to the Socket.IO server instance.
+   *
+   * @param ioServer - Socket.IO server instance to bind handlers/event hooks
+   * to for tracking metrics.
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bindHandlers = (ioServer: any): void => {
     childHook(ioServer, 'of', 'emit', this.hookOutboundEvent);
@@ -119,6 +137,16 @@ export class SocketIOTracker {
     });
   };
 
+  /**
+   * Track an occurring outbound message.
+   *
+   * @param event - The occurring event name.
+   * @param ...data - The data payload for the outbound event.
+   * @example
+   * ```javascript
+   * hookOutboundEvent('event_name', { example_payload: { foo: 'bar' }});
+   * ```
+   */
   hookOutboundEvent = (event: string, ...data: any[]): void => {
     if (EVENTS_TO_IGNORE.includes(event)) {
       return;

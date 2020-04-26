@@ -2,6 +2,12 @@
  * @fileoverview Function to approximate the byte size of some value sent or
  * received by a websocket event. Note that this _won't_ be exact but should
  * suffice as a solid approximation.
+ * @param data - Data to get byte size of.
+ * @returns Byte size of provided data.
+ * @example
+ * ```javascript
+ * const byteSize = getByteSize({ foo: 'bar' });
+ * ```
  */
 export function getByteSize(data: unknown): number {
   try {

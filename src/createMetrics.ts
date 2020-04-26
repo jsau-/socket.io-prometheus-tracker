@@ -3,6 +3,7 @@ import { Metrics } from './Metrics';
 
 /**
  * @fileoverview Function for generating default metrics for the library.
+ * @returns Metric configuration for the library.
  */
 export function createMetrics(): Metrics {
   return {
