@@ -37,18 +37,22 @@ const EVENTS_TO_IGNORE = [
  */
 export class SocketIOTracker {
   public metrics: Metrics;
+  private options: SocketIOTrackerOptions;
   public register: Registry;
 
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ioServer: any,
-    collectDefaultMetrics = false,
+    options: SocketIOTrackerOptions = {
+      collectDefaultMetrics: false,
+      trackSocketId: false,
+    },
   ) {
     this.metrics = createMetrics();
-
+    this.options = options;
     this.register = prometheusDefaultRegister;
 
-    if (collectDefaultMetrics) {
+    if (options.collectDefaultMetrics) {
       prometheusCollectDefaultMetrics({ register: this.register });
     }
 
@@ -66,9 +70,9 @@ export class SocketIOTracker {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ioServer.on('connect', (socket: any) => {
-      const endConnectsLength = this.metrics.connectsLength.startTimer({
-        socketid: socket.id,
-      });
+      const endConnectsLength = this.metrics.connectsLength.startTimer(
+        this.options.trackSocketId ? { socketid: socket.id } : {},
+      );
 
       this.metrics.connectsCurrent.inc();
       this.metrics.connectsTotal.inc();
@@ -99,8 +103,17 @@ export class SocketIOTracker {
 
         const [event, data] = packet.data;
 
-        this.metrics.bytesReceivedTotal.inc({ event }, getByteSize(data));
-        this.metrics.eventsReceivedTotal.inc({ event });
+        let defaultLabels = {};
+
+        if (this.options.trackSocketId) {
+          defaultLabels = { socketid: socket.id };
+        }
+
+        this.metrics.bytesReceivedTotal.inc(
+          { ...defaultLabels, event },
+          getByteSize(data),
+        );
+        this.metrics.eventsReceivedTotal.inc({ ...defaultLabels, event });
       });
     });
   };

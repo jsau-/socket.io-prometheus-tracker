@@ -90,6 +90,29 @@ describe('SocketIOTracker', () => {
     io.emit('connect', socket);
 
     expect(connectsLengthStartTimerSpy).toHaveBeenCalledTimes(1);
+    expect(connectsLengthStartTimerSpy).toHaveBeenCalledWith({});
+
+    expect(endConnectsLength).toHaveBeenCalledTimes(0);
+
+    socket.emit('disconnect');
+
+    expect(connectsLengthStartTimerSpy).toHaveBeenCalledTimes(1);
+    expect(endConnectsLength).toHaveBeenCalledTimes(1);
+  });
+
+  it('Tracks length of connections including socket id', () => {
+    const io: any = mockIO();
+    const socket: any = mockSocket();
+    const socketIOTracker = new SocketIOTracker(io, { trackSocketId: true });
+
+    const connectsLengthStartTimerSpy = jest.spyOn(socketIOTracker.metrics.connectsLength, 'startTimer');
+    const endConnectsLength = jest.fn();
+
+    connectsLengthStartTimerSpy.mockImplementation(() => endConnectsLength);
+
+    io.emit('connect', socket);
+
+    expect(connectsLengthStartTimerSpy).toHaveBeenCalledTimes(1);
     expect(connectsLengthStartTimerSpy).toHaveBeenCalledWith({ socketid: socket.id });
 
     expect(endConnectsLength).toHaveBeenCalledTimes(0);
@@ -117,6 +140,34 @@ describe('SocketIOTracker', () => {
 
       expect(eventsReceivedTotalIncSpy).toHaveBeenCalledTimes(1);
       expect(eventsReceivedTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
+
+      expect(getByteSize).toHaveBeenCalledTimes(1);
+      expect(getByteSize).toHaveBeenCalledWith(eventData);
+
+      done();
+    }
+
+    io.emit('connect', socket);
+    socket.onevent({ data: [eventName, eventData] });
+  });
+
+  it('Tracks inbound events with socket id', (done) => {
+    const io: any = mockIO();
+    const socket: any = mockSocket();
+    const socketIOTracker = new SocketIOTracker(io, { trackSocketId: true });
+
+    const eventName = 'eventName';
+    const eventData = { foo: 'bar' };
+
+    const bytesReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesReceivedTotal, 'inc');
+    const eventsReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsReceivedTotal, 'inc');
+
+    socket.onevent = (): void => {
+      expect(bytesReceivedTotalIncSpy).toHaveBeenCalledTimes(1);
+      expect(bytesReceivedTotalIncSpy).toHaveBeenCalledWith({ event: eventName, socketid: socket.id }, payloadByteSize);
+
+      expect(eventsReceivedTotalIncSpy).toHaveBeenCalledTimes(1);
+      expect(eventsReceivedTotalIncSpy).toHaveBeenCalledWith({ event: eventName, socketid: socket.id });
 
       expect(getByteSize).toHaveBeenCalledTimes(1);
       expect(getByteSize).toHaveBeenCalledWith(eventData);

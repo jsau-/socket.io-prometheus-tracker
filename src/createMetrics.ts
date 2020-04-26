@@ -8,7 +8,7 @@ export function createMetrics(): Metrics {
   return {
     bytesReceivedTotal: new Counter({
       help: 'Total number of bytes received by the server.',
-      labelNames: ['event'],
+      labelNames: ['event', 'socketid'],
       name: 'socketio_bytes_received_total',
     }),
     bytesSentTotal: new Counter({
@@ -35,7 +35,7 @@ export function createMetrics(): Metrics {
     }),
     eventsReceivedTotal: new Counter({
       help: 'Total number of events received by the server.',
-      labelNames: ['event'],
+      labelNames: ['event', 'socketid'],
       name: 'socketio_events_received_total',
     }),
     eventsSentTotal: new Counter({
