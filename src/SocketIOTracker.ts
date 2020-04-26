@@ -92,7 +92,7 @@ export class SocketIOTracker {
           return;
         }
 
-        const [data, event] = packet.data;
+        const [event, data] = packet.data;
 
         this.metrics.bytesReceivedTotal.inc({ event }, getByteSize(data));
         this.metrics.eventsReceivedTotal.inc({ event });

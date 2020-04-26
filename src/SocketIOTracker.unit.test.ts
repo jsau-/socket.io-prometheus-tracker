@@ -68,7 +68,7 @@ describe('SocketIOTracker', () => {
     }
 
     io.emit('connect', socket);
-    socket.onevent({ data: [eventData, eventName] });
+    socket.onevent({ data: [eventName, eventData] });
   });
 
   it('Skips inbound events with no packet', (done: Function) => {
