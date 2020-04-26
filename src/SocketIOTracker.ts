@@ -5,6 +5,7 @@ import {
 } from 'prom-client';
 import { Metrics } from './Metrics';
 import { SocketIOEventPacket } from './SocketIOEventPacket';
+import { SocketIOTrackerOptions } from './SocketIOTrackerOptions';
 import { childHook } from './childHook';
 import { createMetrics } from './createMetrics';
 import { getByteSize } from './getByteSize';

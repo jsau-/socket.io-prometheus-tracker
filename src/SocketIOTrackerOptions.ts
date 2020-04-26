@@ -1,4 +1,4 @@
-interface SocketIOTrackerOptions {
+export interface SocketIOTrackerOptions {
   collectDefaultMetrics?: boolean;
   trackSocketId?: boolean;
 }
