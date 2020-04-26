@@ -4,6 +4,7 @@ import { SocketIOTracker } from './SocketIOTracker';
 import { getByteSize } from './getByteSize';
 
 const payloadByteSize = 42;
+const socketId = 'socket_id';
 
 /**
  * Monkey-patch an EventEmitter to include relevant Socket.IO server methods
@@ -32,6 +33,8 @@ const mockSocket = (): any => {
   socket.compress = () => ({ emit: jest.fn() });
   socket.to = () => ({ emit: jest.fn() });
   socket.volatile = { emit: jest.fn() };
+
+  socket.id = socketId;
 
   return socket;
 }
@@ -81,11 +84,14 @@ describe('SocketIOTracker', () => {
 
     const connectsLengthStartTimerSpy = jest.spyOn(socketIOTracker.metrics.connectsLength, 'startTimer');
     const endConnectsLength = jest.fn();
+
     connectsLengthStartTimerSpy.mockImplementation(() => endConnectsLength);
 
     io.emit('connect', socket);
 
     expect(connectsLengthStartTimerSpy).toHaveBeenCalledTimes(1);
+    expect(connectsLengthStartTimerSpy).toHaveBeenCalledWith({ socketid: socket.id });
+
     expect(endConnectsLength).toHaveBeenCalledTimes(0);
 
     socket.emit('disconnect');

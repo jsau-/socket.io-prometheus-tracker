@@ -47,6 +47,7 @@ Name | Labels | Summary
 `socketio_bytes_received_total` | `['event']` | Total number of bytes received by the server.
 `socketio_bytes_sent_total` | `['event']` | Total number of bytes sent by the server.
 `socketio_connects_current` | `[]` | Current number of clients connected to the server.
+`socketio_connects_length` | `['socketid']` | The length in seconds of connections to the server.
 `socketio_connects_total` | `[]` | Total number of connections that have been made to the server.
 `socketio_disconnects_total` | `[]` | Total number of disconnections from the server.
 `socketio_events_received_total` | `['event']` | Total number of events received by the server.

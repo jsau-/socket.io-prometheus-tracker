@@ -66,7 +66,9 @@ export class SocketIOTracker {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ioServer.on('connect', (socket: any) => {
-      const endConnectsLength = this.metrics.connectsLength.startTimer();
+      const endConnectsLength = this.metrics.connectsLength.startTimer({
+        socketid: socket.id,
+      });
 
       this.metrics.connectsCurrent.inc();
       this.metrics.connectsTotal.inc();

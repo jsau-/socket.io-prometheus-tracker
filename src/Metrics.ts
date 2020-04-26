@@ -7,7 +7,7 @@ export interface Metrics {
   bytesReceivedTotal: Counter<'event'>;
   bytesSentTotal: Counter<'event'>;
   connectsCurrent: Gauge<''>;
-  connectsLength: Histogram<''>;
+  connectsLength: Histogram<'socketid'>;
   connectsTotal: Counter<''>;
   disconnectsTotal: Counter<''>;
   eventsReceivedTotal: Counter<'event'>;

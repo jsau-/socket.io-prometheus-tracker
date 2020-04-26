@@ -22,6 +22,7 @@ export function createMetrics(): Metrics {
     }),
     connectsLength: new Histogram({
       help: 'How long each socket connection to the server has lasted.',
+      labelNames: ['socketid'],
       name: 'socketio_connects_length',
     }),
     connectsTotal: new Counter({
