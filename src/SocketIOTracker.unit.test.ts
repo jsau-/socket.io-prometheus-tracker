@@ -74,6 +74,26 @@ describe('SocketIOTracker', () => {
     expect(disconnectsTotalIncSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('Tracks length of connections', () => {
+    const io: any = mockIO();
+    const socket: any = mockSocket();
+    const socketIOTracker = new SocketIOTracker(io);
+
+    const connectsLengthStartTimerSpy = jest.spyOn(socketIOTracker.metrics.connectsLength, 'startTimer');
+    const endConnectsLength = jest.fn();
+    connectsLengthStartTimerSpy.mockImplementation(() => endConnectsLength);
+
+    io.emit('connect', socket);
+
+    expect(connectsLengthStartTimerSpy).toHaveBeenCalledTimes(1);
+    expect(endConnectsLength).toHaveBeenCalledTimes(0);
+
+    socket.emit('disconnect');
+
+    expect(connectsLengthStartTimerSpy).toHaveBeenCalledTimes(1);
+    expect(endConnectsLength).toHaveBeenCalledTimes(1);
+  });
+
   it('Tracks inbound events', (done) => {
     const io: any = mockIO();
     const socket: any = mockSocket();

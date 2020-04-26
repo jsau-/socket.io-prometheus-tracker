@@ -1,4 +1,4 @@
-import { Counter, Gauge } from 'prom-client';
+import { Counter, Gauge, Histogram } from 'prom-client';
 import { Metrics } from './Metrics';
 
 /**
@@ -19,6 +19,10 @@ export function createMetrics(): Metrics {
     connectsCurrent: new Gauge({
       help: 'Current number of clients connected to the server.',
       name: 'socketio_connects_current',
+    }),
+    connectsLength: new Histogram({
+      help: 'How long each socket connection to the server has lasted.',
+      name: 'socketio_connects_length',
     }),
     connectsTotal: new Counter({
       help: 'Total number of connections that have been made to the server.',
