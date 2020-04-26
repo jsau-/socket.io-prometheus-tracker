@@ -8,48 +8,26 @@ Library aims:
 
 # Contents
 1. [Intro](#socket.io-prometheus-tracker)
-2. [Examples](#examples)
-    - [Basic Use](#basic-use)
-    - [Configuration](#configuration)
-    - [Collecting Default Metrics](#collecting-default-metrics)
+2. [Configuration](#configuration)
 3. [Metrics](#metrics)
-3. [Contributing](#contributing)
-4. [Feedback and Support ](#feedback-and-support)
+4. [Examples](#examples)
+    - [Basic Use](#basic-use)
+    - [Configuring Instances](#configuring-instances)
+    - [Express Application](#express-application)
+5. [Contributing](#contributing)
+6. [Feedback and Support](#feedback-and-support)
 
-## Examples
-
-#### Basic Use
-
-The tracker can be instantiated by passing an instance of a Socket.IO server.
-
-```
-import express from 'express';
-import socketIO from 'socket.io';
-import SocketIOPrometheusTracker from 'socket.io-prometheus-tracker';
-
-const app = express();
-const http = require('http').Server(app);
-const io = socketIO(http);
-const ioPrometheus = new SocketIOPrometheusTracker(io);
-```
-
-Metrics can then be accessed using: `ioPrometheus.register.metrics();`
-
-#### Configuration
+## Configuration
 
 When instantiating `SocketIOPrometheusTracker`, you can optionally pass a
 configuration object. Available parameters are listed below:
 
 Option | Default Value | Summary
 :--- | :--- | :---
-`collectDefaultMetrics` | `false` | Should the library also collect metrics recommended by Prometheus. See: https://github.com/siimon/prom-client#default-metrics
-`trackSocketId` | `false` | Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but does come at the cost of larger metric sizes.
+`collectDefaultMetrics` | `false` | Should the library also collect metrics recommended by Prometheus. Note that this will increase the number of exposed metrics beyond those listed in [Metrics](#metrics). See: https://github.com/siimon/prom-client#default-metrics for more details.
+`trackSocketId` | `false` | Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but does come at the cost of larger metric sizes. Events affected by this value are noted in [Metrics](#metrics).
 
 ## Metrics
-
-Below are all the default metrics available as part of the library. Note that:
-* this will be extended by additional fields if `collectDefaultMetrics` is enabled.
-* field `socketid` will only be included if configuration option `trackSocketId` is set to `true`.
 
 Name | Labels | Summary
 :--- | :--- | :---
@@ -63,6 +41,32 @@ Name | Labels | Summary
 `socketio_events_sent_total` | `['event']` | Total number of events sent by the server.
 
 <sub>* Field `socketid` will only be included if configuration option `trackSocketId` is set to `true`.</sub>
+
+
+## Examples
+
+#### Basic Use
+
+The tracker can be instantiated by passing an instance of a Socket.IO server.
+
+```
+const ioPrometheus = new SocketIOPrometheusTracker(io);
+```
+
+Metrics can then be accessed using: `ioPrometheus.register.metrics();`
+
+#### Configuring Instances
+
+```
+const ioPrometheus = new SocketIOPrometheusTracker(io, {
+  collectDefaultMetrics: true,
+  trackSocketId: true,
+});
+```
+
+#### Express Application
+
+An example project using the library can be found in `./examples/express`.
 
 ## Contributing
 
