@@ -6,7 +6,7 @@ import SocketIOPrometheusTracker from 'socket.io-prometheus-tracker';
 const app = express();
 const http = require('http').Server(app);
 const io = socketIO(http);
-const ioPrometheus = new SocketIOPrometheusTracker(io);
+const ioPrometheus = new SocketIOPrometheusTracker(io, true);
 
 /**
  * Setup some dummy io emits
