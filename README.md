@@ -2,6 +2,10 @@
 
 Track metrics for a Socket.IO server for use in Prometheus.
 
+Library aims:
+* Cover all expected Socket.IO events (including rooms and namespaces).
+* Unopinionated implementation. Serve the metrics using whatever framework you want.
+
 # Contents
 1. [Intro](#socket.io-prometheus-tracker)
 2. [Examples](#examples)
