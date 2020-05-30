@@ -9,12 +9,37 @@ install:
   - npm ci
 stages:
   - test
+  - deploy_to_github_pages
+  - deploy_to_npm
 jobs:
   include:
     - stage: test
       script: npm run check:types
       script: npm run lint
       script: npm run test
+    - stage: deploy_to_github_pages
+      if: type != cron
+      before_deploy:
+        - cp -R ./coverage ./docs/coverage
+        - touch ./docs/.nojekyll
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: "$GITHUB_TOKEN"
+        keep_history: true
+        local_dir: "./docs"
+        on:
+          branch: master
+    - stage: deploy_to_npm
+      if: type != cron
+      deploy:
+        edge: true
+        provider: npm
+        email: "$NPM_EMAIL"
+        api_key: "$NPM_API_TOKEN"
+        skip_cleanup: true
+        on:
+          branch: master
 notifications:
   email:
     on_success: change
