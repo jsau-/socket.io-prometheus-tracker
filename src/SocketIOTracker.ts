@@ -81,11 +81,9 @@ export class SocketIOTracker {
    * @param ioServer - Socket.IO server instance to bind handlers/event hooks
    * to for tracking metrics.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bindHandlers = (ioServer: socketIO.Server): void => {
     childHook(ioServer, 'of', 'emit', this.hookOutboundEvent);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ioServer.on('connect', (socket: socketIO.Socket) => {
       const endConnectsLength = this.metrics.connectsLength.startTimer(
         this.options.trackSocketId ? { socketid: socket.id } : {},
