@@ -2,6 +2,6 @@ import * as promClient from 'prom-client';
 
 export interface SocketIOTrackerOptions {
   collectDefaultMetrics?: boolean;
-  prometheusClient?: typeof promClient;
+  prometheusClient?: Pick<typeof promClient, 'register'|'collectDefaultMetrics'>;
   trackSocketId?: boolean;
 }
