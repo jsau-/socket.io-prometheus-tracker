@@ -5,29 +5,21 @@ import SocketIOPrometheusTracker from 'socket.io-prometheus-tracker';
 
 const app = express();
 const http = require('http').Server(app);
+const port = 3000;
+
 const io = socketIO(http);
 const ioPrometheus = new SocketIOPrometheusTracker(io, { collectDefaultMetrics: true, trackSocketId: true });
 
-/**
- * Setup some dummy io emits
- */
-setInterval(() => io.of('of').emit('io.of.emit', 'Hello, world!'), 5000);
-setInterval(() => io.in('in').emit('io.in.emit', 'Hello, world!'), 5000);
-setInterval(() => io.local.emit('io.local.emit', 'Hello, world!'), 5000);
-setInterval(() => io.to('to').emit('io.to.emit', 'Hello, world!'), 5000);
-setInterval(() => io.emit('io.emit', 'Hello, world!'), 5000);
-
 io.on('connect', socket => {
-  /**
-   * Setup some dummy socket emits
-   */
-  setInterval(() => {
-    socket.broadcast.emit('socket.broadcast.emit', 'Hello, world!');
-    socket.compress(false).emit('socket.compress.emit', 'Hello, world!');
-    socket.to('to').emit('socket.to.emit', 'Hello, world!');
-    socket.volatile.emit('socket.volatile.emit', 'Hello, world!');
-    socket.emit('socket.emit', 'Hello, world!');
-  }, 5000);
+  socket.emit('socket.emit', 'Hello, socket.emit!');
+  socket.broadcast.emit('socket.binary', 'Hello, socket.broadcast!');
+  socket.compress(true).emit('socket.compress', 'Hello, socket.compress!');
+  socket.to('room').emit('socket.room', 'Hello, socket.to!');
+
+  io.emit('io.emit', 'Hello, io.emit!');
+  io.in('room').emit('io.in', 'Hello, io.in!');
+  io.of('/bar').emit('io.of', 'Hello, io.of!');
+  io.to('room').emit('io.to', 'Hello, io.to!');
 });
 
 /**
@@ -41,13 +33,13 @@ app.get('/metrics', (req, res) => {
 /**
  * Run API
  */
-const server = http.listen(3000, function() {
-  console.log('listening on *:3000');
+const server = http.listen(port, function() {
+  console.log(`Server listening on *:${port}`);
 
   /**
    * Setup dummy client
    */
-  const client = socketIOClient('http://localhost:3000', {
+  const client = socketIOClient(`http://localhost:${port}`, {
     forceNew: true,
     reconnection: true,
     reconnectionAttempts: Infinity,
@@ -56,13 +48,6 @@ const server = http.listen(3000, function() {
   });
 
   client.on('connect', () => {
-    console.log('Websocket client connected');
-    setInterval(() => client.emit('client.emit', 'Hello, world!'), 3000);
-    setTimeout(() => client.disconnect(), 5000);
-  });
-
-  client.on('disconnect', () => {
-    console.log('Websocket client disconnected');
-    setTimeout(() => client.connect(), 5000);
+    client.emit('client.emit', 'Hello, world!');
   });
 });
