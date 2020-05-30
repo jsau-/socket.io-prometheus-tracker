@@ -1,4 +1,5 @@
 import * as promClient from 'prom-client';
+import socketIO from 'socket.io';
 import { Metrics } from './Metrics';
 import { SocketIOEventPacket } from './SocketIOEventPacket';
 import { SocketIOTrackerOptions } from './SocketIOTrackerOptions';
@@ -52,7 +53,7 @@ export class SocketIOTracker {
    */
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ioServer: any,
+    ioServer: socketIO.Server,
     options: SocketIOTrackerOptions = {
       collectDefaultMetrics: false,
       trackSocketId: false,
@@ -76,11 +77,11 @@ export class SocketIOTracker {
    * to for tracking metrics.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  bindHandlers = (ioServer: any): void => {
+  bindHandlers = (ioServer: socketIO.Server): void => {
     childHook(ioServer, 'of', 'emit', this.hookOutboundEvent);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ioServer.on('connect', (socket: any) => {
+    ioServer.on('connect', (socket: socketIO.Socket) => {
       const endConnectsLength = this.metrics.connectsLength.startTimer(
         this.options.trackSocketId ? { socketid: socket.id } : {},
       );
