@@ -1,14 +1,10 @@
-import {
-  Registry,
-  collectDefaultMetrics as prometheusCollectDefaultMetrics,
-  register as prometheusDefaultRegister,
-} from 'prom-client';
+import * as promClient from 'prom-client';
 import { Metrics } from './Metrics';
 import { SocketIOEventPacket } from './SocketIOEventPacket';
 import { SocketIOTrackerOptions } from './SocketIOTrackerOptions';
-import { childHook } from './childHook';
 import { createMetrics } from './createMetrics';
 import { getByteSize } from './getByteSize';
+import { childHook } from './childHook';
 import { hook } from './hook';
 
 /**
@@ -17,6 +13,7 @@ import { hook } from './hook';
  */
 const EVENTS_TO_IGNORE = [
   'connect',
+  'connection',
   'connect_error',
   'connect_timeout',
   'disconnect',
@@ -39,7 +36,7 @@ const EVENTS_TO_IGNORE = [
 export class SocketIOTracker {
   public metrics: Metrics;
   private options: SocketIOTrackerOptions;
-  public register: Registry;
+  public register: promClient.Registry;
 
   /**
    * @param ioServer - The Socket.IO server instance to track metrics for.
@@ -63,10 +60,10 @@ export class SocketIOTracker {
   ) {
     this.metrics = createMetrics();
     this.options = options;
-    this.register = prometheusDefaultRegister;
+    this.register = promClient.register;
 
     if (options.collectDefaultMetrics) {
-      prometheusCollectDefaultMetrics({ register: this.register });
+      promClient.collectDefaultMetrics({ register: this.register });
     }
 
     this.bindHandlers(ioServer);
@@ -81,11 +78,6 @@ export class SocketIOTracker {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bindHandlers = (ioServer: any): void => {
     childHook(ioServer, 'of', 'emit', this.hookOutboundEvent);
-    childHook(ioServer, 'in', 'emit', this.hookOutboundEvent);
-    childHook(ioServer, 'local', 'emit', this.hookOutboundEvent);
-    childHook(ioServer, 'to', 'emit', this.hookOutboundEvent);
-
-    hook(ioServer, 'emit', this.hookOutboundEvent);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ioServer.on('connect', (socket: any) => {
@@ -101,12 +93,6 @@ export class SocketIOTracker {
         this.metrics.connectsCurrent.dec();
         this.metrics.disconnectsTotal.inc();
       });
-
-      childHook(socket, 'binary', 'emit', this.hookOutboundEvent);
-      childHook(socket, 'broadcast', 'emit', this.hookOutboundEvent);
-      childHook(socket, 'compress', 'emit', this.hookOutboundEvent);
-      childHook(socket, 'to', 'emit', this.hookOutboundEvent);
-      childHook(socket, 'volatile', 'emit', this.hookOutboundEvent);
 
       hook(socket, 'emit', this.hookOutboundEvent);
 
@@ -132,6 +118,7 @@ export class SocketIOTracker {
           { ...defaultLabels, event },
           getByteSize(data),
         );
+
         this.metrics.eventsReceivedTotal.inc({ ...defaultLabels, event });
       });
     });
