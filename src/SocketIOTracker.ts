@@ -62,12 +62,12 @@ export class SocketIOTracker {
     this.metrics = createMetrics();
     this.options = options;
 
-    const prometheusClientWithDefault = options.prometheusClient || promClient;
+    const prometheusClientToUse = options.prometheusClient || promClient;
 
-    this.register = prometheusClientWithDefault.register;
+    this.register = prometheusClientToUse.register;
 
     if (options.collectDefaultMetrics) {
-      prometheusClientWithDefault.collectDefaultMetrics({
+      prometheusClientToUse.collectDefaultMetrics({
         register: this.register,
       });
     }
@@ -101,9 +101,14 @@ export class SocketIOTracker {
       hook(socket, 'emit', this.hookOutboundEvent);
 
       /**
-       * Track inbound events (eg. those handled by socket.on - done like this
-       * to ensure we track data about events even if not explicitly handled,
-       * 'cos those will still have effects on network traffic into the node!)
+       * Track inbound events (eg. those handled by socket.on). This ensures we
+       * track _all_ inbound events, even those without defined handlers.
+       *
+       * My thought process on tracking events without defined handlers is it
+       * might be useful to identify:
+       * -- Clients using outdated software (i.e. "This event stopped being
+       *    handled 2 months ago. Crap, why are they still on that build!?")
+       * -- Malicious actors sending dummy events attempting to DOS the server
        */
       hook(socket, 'onevent', (packet: SocketIOEventPacket) => {
         if (!packet || !packet.data) {
