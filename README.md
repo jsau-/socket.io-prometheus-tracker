@@ -39,6 +39,7 @@ configuration object. Available parameters are listed below:
 Option | Default Value | Summary
 :--- | :--- | :---
 `collectDefaultMetrics` | `false` | Should the library also collect metrics recommended by Prometheus. Note that this will increase the number of exposed metrics beyond those listed in [Metrics](#metrics). See: https://github.com/siimon/prom-client#default-metrics for more details.
+`prometheusClient` | undefined | An instance of `prom-client` the library uses to determine the registry for storing metrics. If not provided, the default registry will be used.
 `trackSocketId` | `false` | Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but does come at the cost of larger metric sizes. Events affected by this value are noted in [Metrics](#metrics).
 
 ## Metrics
