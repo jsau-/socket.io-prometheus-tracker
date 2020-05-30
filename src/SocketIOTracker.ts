@@ -52,19 +52,24 @@ export class SocketIOTracker {
    * ```
    */
   constructor(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ioServer: socketIO.Server,
     options: SocketIOTrackerOptions = {
       collectDefaultMetrics: false,
+      prometheusClient: undefined,
       trackSocketId: false,
     },
   ) {
     this.metrics = createMetrics();
     this.options = options;
-    this.register = promClient.register;
+
+    const prometheusClientWithDefault = options.prometheusClient || promClient;
+
+    this.register = prometheusClientWithDefault.register;
 
     if (options.collectDefaultMetrics) {
-      promClient.collectDefaultMetrics({ register: this.register });
+      prometheusClientWithDefault.collectDefaultMetrics({
+        register: this.register,
+      });
     }
 
     this.bindHandlers(ioServer);
