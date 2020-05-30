@@ -36,4 +36,5 @@ chrome-user-data
 jest.config.js
 package-lock.json
 src/**/*
+test/**/*
 examples/**/*
