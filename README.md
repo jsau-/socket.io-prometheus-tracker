@@ -6,13 +6,14 @@
 
 Track metrics for a Socket.IO server for use in Prometheus.
 
-Note that by its nature this library relies on monkey-patching the
-`socket.io` server instance to hook into functions like `emit()`. Bear
-this in mind during use if you're applying any monkey-patches of your own, and please read the source code to ensure compatibility.
+***Note that by its nature this library relies on monkey-patching the
+`socket.io` server instance to hook into functions like `socket.emit`. Bear
+this in mind if you're applying any monkey-patches of your own, and please read
+the source code to ensure compatibility.***
 
 Library aims:
-* Cover all expected Socket.IO events (including rooms and namespaces).
-* Unopinionated implementation. Serve the metrics using whatever framework you want.
+* Cover all Socket.IO events, sent or received.
+* _Just track metrics_. You can do what you want with them - serve via `express`, periodically write to a file, whatever.
 
 Useful links:
 * [Documentation](https://jsau-.github.io/socket.io-prometheus-tracker)
