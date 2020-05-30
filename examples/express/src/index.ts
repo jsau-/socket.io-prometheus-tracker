@@ -11,14 +11,20 @@ const io = socketIO(http);
 const ioPrometheus = new SocketIOPrometheusTracker(io, { collectDefaultMetrics: true, trackSocketId: true });
 
 io.on('connect', socket => {
-  socket.emit('socket.emit', 'Hello, socket.emit!');
   socket.broadcast.emit('socket.binary', 'Hello, socket.broadcast!');
   socket.compress(true).emit('socket.compress', 'Hello, socket.compress!');
+  socket.emit('socket.emit', 'Hello, socket.emit!');
+  socket.send('Hello, socket.send!');
   socket.to('room').emit('socket.room', 'Hello, socket.to!');
+  socket.volatile.emit('socket.volatile', 'Hello, socket.volatile!');
 
+
+  io.compress(true).emit('io.compress', 'Hello, io.compress!');
   io.emit('io.emit', 'Hello, io.emit!');
   io.in('room').emit('io.in', 'Hello, io.in!');
+  io.local.emit('io.local', 'Hello, io.local!');
   io.of('/bar').emit('io.of', 'Hello, io.of!');
+  io.send('Hello, io.send!');
   io.to('room').emit('io.to', 'Hello, io.to!');
 });
 
