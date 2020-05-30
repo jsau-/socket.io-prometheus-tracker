@@ -1,10 +1,23 @@
 # socket.io-prometheus-tracker
 
+[![npm version](https://img.shields.io/npm/v/socket.io-prometheus-tracker.svg)](https://www.npmjs.com/package/socket.io-prometheus-tracker)
+[![Build Status](https://travis-ci.com/jsau-/socket.io-prometheus-tracker.svg?branch=master)](https://travis-ci.com/jsau-/socket.io-prometheus-tracker)
+[![npm downloads](https://img.shields.io/npm/dm/socket.io-prometheus-tracker.svg)](https://www.npmjs.com/package/socket.io-prometheus-tracker)
+
 Track metrics for a Socket.IO server for use in Prometheus.
+
+Note that by its nature this library relies on monkey-patching the
+`socket.io` server instance to hook into functions like `emit()`. Bear
+this in mind during use if you're applying any monkey-patches of your own, and please read the source code to ensure compatibility.
 
 Library aims:
 * Cover all expected Socket.IO events (including rooms and namespaces).
 * Unopinionated implementation. Serve the metrics using whatever framework you want.
+
+Useful links:
+* [Documentation](https://jsau-.github.io/socket.io-prometheus-tracker)
+* [Code Coverage Report](https://jsau-.github.io/socket.io-prometheus-tracker/coverage/lcov-report)
+* [Unit Test Report](https://jsau-.github.io/socket.io-prometheus-tracker/test_report.html)
 
 # Contents
 1. [Intro](#socket.io-prometheus-tracker)
@@ -15,6 +28,7 @@ Library aims:
     - [Configuring Instances](#configuring-instances)
     - [Express Application](#express-application)
 5. [Contributing](#contributing)
+    - [Useful Snippets](#useful-snippets)
 6. [Feedback and Support](#feedback-and-support)
 
 ## Configuration
@@ -76,6 +90,26 @@ major piece of work and/or refactoring.
 
 Contributions should be based off the `develop` branch, and any pull requests
 made into `develop`.
+
+Pull requests should include a corresponding entry in `CHANGELOG.md`.
+
+Note that this project uses [TravisCI](https://travis-ci.org/) for continuous
+integration. Any pull requests failing automated tests will be rejected.
+
+#### Useful Snippets
+
+```
+// Install dependencies
+npm ci
+
+// Run tests
+npm run check:types
+npm run lint
+npm run test
+
+// Build the library
+npm run build
+```
 
 ## Feedback and Support
 
