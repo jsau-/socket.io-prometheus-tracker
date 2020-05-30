@@ -1,25 +1,11 @@
 import { EventEmitter } from 'events';
-import { register } from 'prom-client';
+import socketIO from 'socket.io';
+import * as promClient from 'prom-client';
 import { SocketIOTracker } from './SocketIOTracker';
 import { getByteSize } from './getByteSize';
 
 const payloadByteSize = 42;
 const socketId = 'socket_id';
-
-/**
- * Monkey-patch an EventEmitter to include relevant Socket.IO server methods
- * for emitting to rooms/namespaces.
- */
-const mockIO = (): any => {
-  const io: any = new EventEmitter();
-
-  io.of = () => ({ emit: jest.fn() });
-  io.in = () => ({ emit: jest.fn() });
-  io.local = { emit: jest.fn() };
-  io.to = () => ({ emit: jest.fn() });
-
-  return io;
-};
 
 /**
  * Monkey-patch an EventEmitter to include relevant Socket.IO socket methods for
@@ -28,16 +14,15 @@ const mockIO = (): any => {
 const mockSocket = (): any => {
   const socket: any = new EventEmitter();
 
-  socket.binary = () => ({ emit: jest.fn() });
-  socket.broadcast = { emit: jest.fn() };
-  socket.compress = () => ({ emit: jest.fn() });
-  socket.to = () => ({ emit: jest.fn() });
-  socket.volatile = { emit: jest.fn() };
+  socket.broadcast = socket;
+  socket.compress = () => socket;
+  socket.to = () => socket;
+  socket.volatile = socket;
 
   socket.id = socketId;
 
   return socket;
-}
+};
 
 jest.mock('./getByteSize', () => ({
   getByteSize: jest.fn().mockImplementation(() => payloadByteSize),
@@ -45,16 +30,51 @@ jest.mock('./getByteSize', () => ({
 
 describe('SocketIOTracker', () => {
   beforeEach(() => {
-    register.clear();
+    promClient.register.clear();
+  });
+
+  it('Uses default Prometheus register', () => {
+    const io = socketIO();
+    const socketIOTracker = new SocketIOTracker(io);
+    expect(socketIOTracker.register).toBe(promClient.register);
+  });
+
+  it('Does not collect default Prometheus metrics by default', () => {
+    const io = socketIO();
+    const collectDefaultMetricsSpy = jest.spyOn(
+      promClient,
+      'collectDefaultMetrics',
+    );
+    new SocketIOTracker(io);
+    expect(collectDefaultMetricsSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it('Collects default metrics according to ctor params', () => {
+    const io = socketIO();
+    const collectDefaultMetricsSpy = jest.spyOn(
+      promClient,
+      'collectDefaultMetrics',
+    );
+    new SocketIOTracker(io, { collectDefaultMetrics: true });
+    expect(collectDefaultMetricsSpy).toHaveBeenCalledTimes(1);
+    expect(collectDefaultMetricsSpy).toHaveBeenCalledWith({
+      register: promClient.register,
+    });
   });
 
   it('Tracks client connections', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
-    const connectsCurrentIncSpy = jest.spyOn(socketIOTracker.metrics.connectsCurrent, 'inc');
-    const connectsTotalIncSpy = jest.spyOn(socketIOTracker.metrics.connectsTotal, 'inc');
+    const connectsCurrentIncSpy = jest.spyOn(
+      socketIOTracker.metrics.connectsCurrent,
+      'inc',
+    );
+    const connectsTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.connectsTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
 
@@ -63,12 +83,18 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks client disconnections', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
-    const connectsCurrentDecSpy = jest.spyOn(socketIOTracker.metrics.connectsCurrent, 'dec');
-    const disconnectsTotalIncSpy = jest.spyOn(socketIOTracker.metrics.disconnectsTotal, 'inc');
+    const connectsCurrentDecSpy = jest.spyOn(
+      socketIOTracker.metrics.connectsCurrent,
+      'dec',
+    );
+    const disconnectsTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.disconnectsTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     socket.emit('disconnect');
@@ -78,11 +104,14 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks length of connections', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
-    const connectsLengthStartTimerSpy = jest.spyOn(socketIOTracker.metrics.connectsLength, 'startTimer');
+    const connectsLengthStartTimerSpy = jest.spyOn(
+      socketIOTracker.metrics.connectsLength,
+      'startTimer',
+    );
     const endConnectsLength = jest.fn();
 
     connectsLengthStartTimerSpy.mockImplementation(() => endConnectsLength);
@@ -101,11 +130,14 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks length of connections including socket id', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io, { trackSocketId: true });
 
-    const connectsLengthStartTimerSpy = jest.spyOn(socketIOTracker.metrics.connectsLength, 'startTimer');
+    const connectsLengthStartTimerSpy = jest.spyOn(
+      socketIOTracker.metrics.connectsLength,
+      'startTimer',
+    );
     const endConnectsLength = jest.fn();
 
     connectsLengthStartTimerSpy.mockImplementation(() => endConnectsLength);
@@ -113,7 +145,9 @@ describe('SocketIOTracker', () => {
     io.emit('connect', socket);
 
     expect(connectsLengthStartTimerSpy).toHaveBeenCalledTimes(1);
-    expect(connectsLengthStartTimerSpy).toHaveBeenCalledWith({ socketid: socket.id });
+    expect(connectsLengthStartTimerSpy).toHaveBeenCalledWith({
+      socketid: socket.id,
+    });
 
     expect(endConnectsLength).toHaveBeenCalledTimes(0);
 
@@ -123,107 +157,148 @@ describe('SocketIOTracker', () => {
     expect(endConnectsLength).toHaveBeenCalledTimes(1);
   });
 
-  it('Tracks inbound events', (done) => {
-    const io: any = mockIO();
+  it('Tracks inbound events', done => {
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesReceivedTotal, 'inc');
-    const eventsReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsReceivedTotal, 'inc');
+    const bytesReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesReceivedTotal,
+      'inc',
+    );
+    const eventsReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsReceivedTotal,
+      'inc',
+    );
 
     socket.onevent = (): void => {
       expect(bytesReceivedTotalIncSpy).toHaveBeenCalledTimes(1);
-      expect(bytesReceivedTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+      expect(bytesReceivedTotalIncSpy).toHaveBeenCalledWith(
+        { event: eventName },
+        payloadByteSize,
+      );
 
       expect(eventsReceivedTotalIncSpy).toHaveBeenCalledTimes(1);
-      expect(eventsReceivedTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
+      expect(eventsReceivedTotalIncSpy).toHaveBeenCalledWith({
+        event: eventName,
+      });
 
       expect(getByteSize).toHaveBeenCalledTimes(1);
       expect(getByteSize).toHaveBeenCalledWith(eventData);
 
       done();
-    }
+    };
 
     io.emit('connect', socket);
     socket.onevent({ data: [eventName, eventData] });
   });
 
-  it('Tracks inbound events with socket id', (done) => {
-    const io: any = mockIO();
+  it('Tracks inbound events with socket id', done => {
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io, { trackSocketId: true });
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesReceivedTotal, 'inc');
-    const eventsReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsReceivedTotal, 'inc');
+    const bytesReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesReceivedTotal,
+      'inc',
+    );
+    const eventsReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsReceivedTotal,
+      'inc',
+    );
 
     socket.onevent = (): void => {
       expect(bytesReceivedTotalIncSpy).toHaveBeenCalledTimes(1);
-      expect(bytesReceivedTotalIncSpy).toHaveBeenCalledWith({ event: eventName, socketid: socket.id }, payloadByteSize);
+      expect(bytesReceivedTotalIncSpy).toHaveBeenCalledWith(
+        { event: eventName, socketid: socket.id },
+        payloadByteSize,
+      );
 
       expect(eventsReceivedTotalIncSpy).toHaveBeenCalledTimes(1);
-      expect(eventsReceivedTotalIncSpy).toHaveBeenCalledWith({ event: eventName, socketid: socket.id });
+      expect(eventsReceivedTotalIncSpy).toHaveBeenCalledWith({
+        event: eventName,
+        socketid: socket.id,
+      });
 
       expect(getByteSize).toHaveBeenCalledTimes(1);
       expect(getByteSize).toHaveBeenCalledWith(eventData);
 
       done();
-    }
+    };
 
     io.emit('connect', socket);
     socket.onevent({ data: [eventName, eventData] });
   });
 
   it('Skips inbound events with no packet', (done: Function) => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
-    const bytesReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesReceivedTotal, 'inc');
-    const eventsReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsReceivedTotal, 'inc');
+    const bytesReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesReceivedTotal,
+      'inc',
+    );
+    const eventsReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsReceivedTotal,
+      'inc',
+    );
 
     socket.onevent = (): void => {
       expect(bytesReceivedTotalIncSpy).toHaveBeenCalledTimes(0);
       expect(eventsReceivedTotalIncSpy).toHaveBeenCalledTimes(0);
       expect(getByteSize).toHaveBeenCalledTimes(0);
       done();
-    }
+    };
 
     io.emit('connect', socket);
     socket.onevent();
   });
 
   it('Skips inbound events with no data array', (done: Function) => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
-    const bytesReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesReceivedTotal, 'inc');
-    const eventsReceivedTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsReceivedTotal, 'inc');
+    const bytesReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesReceivedTotal,
+      'inc',
+    );
+    const eventsReceivedTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsReceivedTotal,
+      'inc',
+    );
 
     socket.onevent = (): void => {
       expect(bytesReceivedTotalIncSpy).toHaveBeenCalledTimes(0);
       expect(eventsReceivedTotalIncSpy).toHaveBeenCalledTimes(0);
       expect(getByteSize).toHaveBeenCalledTimes(0);
       done();
-    }
+    };
 
     io.emit('connect', socket);
     socket.onevent({});
   });
 
   it('Does not track internal socketio events', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     io.emit('connect_error');
@@ -244,21 +319,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks io.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     io.emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -266,21 +350,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks io.of.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     io.of('foo').emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -288,21 +381,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks io.in.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     io.in('foo').emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -310,21 +412,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks io.local.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     io.local.emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -332,21 +443,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks io.to.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     io.to('foo').emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -354,43 +474,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks socket.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     socket.emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
-    expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
-    expect(getByteSize).toHaveBeenCalledTimes(1);
-    expect(getByteSize).toHaveBeenCalledWith([eventData]);
-  });
-
-  it('Tracks socket.binary.emit', () => {
-    const io: any = mockIO();
-    const socket: any = mockSocket();
-    const socketIOTracker = new SocketIOTracker(io);
-
-    const eventName = 'eventName';
-    const eventData = { foo: 'bar' };
-
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
-
-    io.emit('connect', socket);
-    socket.binary(false).emit(eventName, eventData);
-
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -398,21 +505,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks socket.broadcast.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     socket.broadcast.emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -420,21 +536,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks socket.compress.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     socket.compress(false).emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -442,21 +567,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks socket.to.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     socket.to('foo').emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);
@@ -464,21 +598,30 @@ describe('SocketIOTracker', () => {
   });
 
   it('Tracks socket.volatile.emit', () => {
-    const io: any = mockIO();
+    const io = socketIO();
     const socket: any = mockSocket();
     const socketIOTracker = new SocketIOTracker(io);
 
     const eventName = 'eventName';
     const eventData = { foo: 'bar' };
 
-    const bytesSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.bytesSentTotal, 'inc');
-    const eventsSentTotalIncSpy = jest.spyOn(socketIOTracker.metrics.eventsSentTotal, 'inc');
+    const bytesSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.bytesSentTotal,
+      'inc',
+    );
+    const eventsSentTotalIncSpy = jest.spyOn(
+      socketIOTracker.metrics.eventsSentTotal,
+      'inc',
+    );
 
     io.emit('connect', socket);
     socket.volatile.emit(eventName, eventData);
 
     expect(bytesSentTotalIncSpy).toHaveBeenCalledTimes(1);
-    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName }, payloadByteSize);
+    expect(bytesSentTotalIncSpy).toHaveBeenCalledWith(
+      { event: eventName },
+      payloadByteSize,
+    );
     expect(eventsSentTotalIncSpy).toHaveBeenCalledTimes(1);
     expect(eventsSentTotalIncSpy).toHaveBeenCalledWith({ event: eventName });
     expect(getByteSize).toHaveBeenCalledTimes(1);

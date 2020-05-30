@@ -1,29 +1,25 @@
 {
-    "compilerOptions": {
-      "allowJs": false,
-      "allowSyntheticDefaultImports": true,
-      "alwaysStrict": true,
-      "baseUrl": "./",
-      "declaration": true,
-      "esModuleInterop": true,
-      "lib": ["es6"],
-      "module": "es2015",
-      "moduleResolution": "node",
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitAny": true,
-      "noImplicitReturns": true,
-      "noImplicitThis": true,
-      "noUnusedLocals": true,
-      "noUnusedParameters": true,
-      "outDir": "./build",
-      "strict": true,
-      "strictNullChecks": true,
-      "target": "es5"
-    },
-    "exclude": [
-      "**/*/*.test.ts",
-    ],
-    "include": [
-      "./src/**/*.ts"
-    ]
-  }
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "baseUrl": "./",
+    "declaration": true,
+    "esModuleInterop": true,
+    "lib": ["es6"],
+    "module": "es2015",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "./build",
+    "strict": true,
+    "strictNullChecks": true,
+    "target": "es5"
+  },
+  "exclude": ["**/*/*.test.ts"],
+  "include": ["./src/**/*.ts"]
+}
