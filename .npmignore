@@ -29,12 +29,21 @@ chrome-user-data
 # Repository files to not bundle
 .babelrc
 .esdoc.json
+.eslintignore
 .eslintrc.js
 .gitattributes
 .gitignore
+.prettierrc.json
 .travis.yml
+CHANGELOG.md
 jest.config.js
+LICENSE
 package-lock.json
+README.md
+tsconfig.json
+typedoc.js
 src/**/*
+docs/**/*
+examples/**/*
 test/**/*
 examples/**/*

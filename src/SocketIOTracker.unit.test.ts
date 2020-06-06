@@ -53,31 +53,31 @@ describe('SocketIOTracker', () => {
   });
 
   it('Does not collect default Prometheus metrics by default', () => {
-    const mockPrometheusClient = {
-      register: jest.fn(),
-      collectDefaultMetrics: jest.fn(),
-    };
+    const collectDefaultMetricsSpy = jest.spyOn(
+      promClient,
+      'collectDefaultMetrics',
+    );
 
     const io: any = mockServer();
-    new SocketIOTracker(io, { prometheusClient: mockPrometheusClient });
-    expect(mockPrometheusClient.collectDefaultMetrics).toHaveBeenCalledTimes(0);
+    new SocketIOTracker(io, { prometheusClient: promClient });
+    expect(collectDefaultMetricsSpy).toHaveBeenCalledTimes(0);
   });
 
   it('Collects default metrics according to ctor params', () => {
-    const mockPrometheusClient = {
-      register: jest.fn(),
-      collectDefaultMetrics: jest.fn(),
-    };
+    const collectDefaultMetricsSpy = jest.spyOn(
+      promClient,
+      'collectDefaultMetrics',
+    );
 
     const io: any = mockServer();
     new SocketIOTracker(io, {
       collectDefaultMetrics: true,
-      prometheusClient: mockPrometheusClient,
+      prometheusClient: promClient
     });
 
-    expect(mockPrometheusClient.collectDefaultMetrics).toHaveBeenCalledTimes(1);
-    expect(mockPrometheusClient.collectDefaultMetrics).toHaveBeenCalledWith({
-      register: mockPrometheusClient.register,
+    expect(collectDefaultMetricsSpy).toHaveBeenCalledTimes(1);
+    expect(collectDefaultMetricsSpy).toHaveBeenCalledWith({
+      register: promClient.register,
     });
   });
 
