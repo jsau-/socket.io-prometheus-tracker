@@ -9,7 +9,11 @@
  * const byteSize = getByteSize({ foo: 'bar' });
  * ```
  */
-export function getByteSize(data: unknown): number {
+export function getByteSize(data?: unknown): number {
+  if (!data) {
+    return 0;
+  }
+
   try {
     const stringData = 'string' === typeof data ? data : JSON.stringify(data);
     return Buffer.byteLength(stringData || '', 'utf8');

@@ -53,7 +53,7 @@ export function childHook(
   objectToHook: any,
   parentProperty: string,
   childMethodToHook: string,
-  hookFunc: Function,
+  hookFunc: (...args: any[]) => unknown,
 ): void {
   if (!objectToHook[parentProperty]) {
     return;

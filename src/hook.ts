@@ -22,7 +22,7 @@
 export function hook(
   objectToHook: any,
   methodToHook: string,
-  hookFunc: Function,
+  hookFunc: (...args: any[]) => unknown,
 ): any {
   if (!objectToHook || !objectToHook[methodToHook]) {
     return;
