@@ -18,10 +18,10 @@ jobs:
       run: npm ci --ignore-scripts
     - name: Lint
       run: npm run lint
-    - name: Test
-      run: npm test
     - name: Compile
       run: npm run build
+    - name: Test
+      run: npm test
     - name: Setup docs
       run: |
         cp -R ./coverage ./docs/coverage
