@@ -6,8 +6,9 @@
     "baseUrl": "./",
     "declaration": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["es6"],
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
@@ -18,8 +19,7 @@
     "outDir": "./build",
     "strict": true,
     "strictNullChecks": true,
-    "target": "es5"
+    "target": "es5",
   },
-  "exclude": ["**/*/*.test.ts"],
   "include": ["./src/**/*.ts"]
 }

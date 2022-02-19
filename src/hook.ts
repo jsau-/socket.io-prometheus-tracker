@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
- * @fileoverview Method for monkey-patching a hook to run before the existing
- * logic for a method on an object prototype.
+ * Method for monkey-patching a hook to run before the existing logic for a
+ * method on an object prototype.
+ *
  * @param objectToHook - The object to apply a hook on. This should be an object
  * of Functions indexed by string keys.
  * @param methodToHook - The method on the object we want to apply a hook to.
@@ -19,11 +20,11 @@
  * exampleObject.methodToHook();
  * ```
  */
-export function hook(
+export const hook = (
   objectToHook: any,
   methodToHook: string,
-  hookFunc: Function,
-): any {
+  hookFunc: (...args: any[]) => unknown,
+): any => {
   if (!objectToHook || !objectToHook[methodToHook]) {
     return;
   }
