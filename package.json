@@ -8,9 +8,9 @@
     "prebuild": "del-cli \"./docs/**/*\" && del-cli \"./build/**/*\"",
     "build:source": "tsc -p tsconfig.dist.json",
     "build": "npm run prebuild && npm run build:source && npm run doc",
-    "lint": "./node_modules/.bin/eslint \"./src/**/*.ts\" --color",
-    "lint:fix": "./node_modules/.bin/eslint \"./src/**/*.ts\" --color --fix",
-    "test": "./node_modules/.bin/jest"
+    "lint": "eslint \"./src/**/*.ts\" --color",
+    "lint:fix": "eslint \"./src/**/*.ts\" --color --fix",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "del-cli": "4.0.1",
     "eslint": "7.26.0",
     "express": "4.17.3",
+    "jest": "27.5.1",
     "jest-html-reporter": "3.4.2",
     "node-notifier": "10.0.1",
     "prettier": "2.5.1",

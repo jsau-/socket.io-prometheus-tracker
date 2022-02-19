@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x, 16.x]
+        node-version: [12.x, 14.x, 16.x]
     steps:
     - uses: actions/checkout@v2
     - name: Using Node.js ${{ matrix.node-version }}
@@ -19,6 +19,6 @@ jobs:
     - name: Lint
       run: npm run lint
     - name: Test
-      run: npm run test
+      run: npm test
     - name: Compile
       run: npm run build
