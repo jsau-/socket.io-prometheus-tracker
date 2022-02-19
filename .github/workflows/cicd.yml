@@ -1,9 +1,7 @@
 name: SocketIOPrometheusTracker CI/CD
-
 on:
   push:
   pull_request:
-
 jobs:
   build:
     runs-on: ubuntu-latest
