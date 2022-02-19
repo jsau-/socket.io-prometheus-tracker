@@ -1,0 +1,232 @@
+<html><head><meta charset="utf-8"/><title>Test Report</title><style type="text/css">html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+body {
+  padding: 2rem 1rem;
+  font-size: 0.85rem;
+}
+#jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+#timestamp {
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+/** SUMMARY */
+#summary {
+  color: #333;
+  margin: 2rem 0;
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 2rem;
+  background: #eee;
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 2rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: #4f8a10;
+  border-left: 0.4rem solid #4f8a10;
+  padding-left: 0.5rem;
+}
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: #d8000c;
+  border-left: 0.4rem solid #d8000c;
+  padding-left: 0.5rem;
+}
+.summary-pending {
+  color: #9f6000;
+  border-left: 0.4rem solid #9f6000;
+  padding-left: 0.5rem;
+}
+.summary-empty {
+  color: #999;
+  border-left: 0.4rem solid #999;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: #dff2bf;
+  color: #4f8a10;
+}
+.test-result.failed {
+  background-color: #ffbaba;
+  color: #d8000c;
+}
+.test-result.pending {
+  background-color: #ffdf61;
+  color: #9f6000;
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-suitename {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+.failureMessages {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #d8000c;
+}
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 2rem;
+}
+.suite-info {
+  padding: 1rem;
+  background-color: #eee;
+  color: #777;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+.suite-info .suite-time {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.75rem;
+}
+.suite-info .suite-time.warn {
+  background-color: #d8000c;
+  color: #fff;
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: #efefef;
+}
+.suite-consolelog-header {
+  font-weight: bold;
+}
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-consolelog-item-origin {
+  color: #777;
+  font-weight: bold;
+}
+.suite-consolelog-item-message {
+  color: #000;
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+/* OBSOLETE SNAPSHOTS */
+.suite-obsolete-snapshots {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: #ffbaba;
+  color: #d8000c;
+}
+.suite-obsolete-snapshots-header {
+  font-weight: bold;
+}
+.suite-obsolete-snapshots-item {
+  padding: 0.5rem;
+}
+.suite-obsolete-snapshots-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-obsolete-snapshots-item-message {
+  color: #000;
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+</style></head><body><div id="jesthtml-content"><header><h1 id="title">Test Report</h1></header><div id="metadata-container"><div id="timestamp">Started: 2022-02-19 03:20:07</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (6)</div><div class="summary-passed">6 passed</div><div class="summary-failed summary-empty">0 failed</div><div class="summary-pending summary-empty">0 pending</div></div><div id="test-summary"><div class="summary-total">Tests (53)</div><div class="summary-passed">53 passed</div><div class="summary-failed summary-empty">0 failed</div><div class="summary-pending summary-empty">0 pending</div></div></div></div><div id="suite-1" class="suite-container"><div class="suite-info"><div class="suite-path">/home/runner/work/socket.io-prometheus-tracker/socket.io-prometheus-tracker/src/SocketIOPrometheusTracker.unit.test.ts</div><div class="suite-time">2.582s</div></div><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Uses default Prometheus register</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Does not collect default Prometheus metrics by default</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Collects default metrics according to ctor params</div><div class="test-status">passed</div><div class="test-duration">0.008s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks client connections</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks client disconnections</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks length of connections</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks length of connections including socket id</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Skips inbound events with no packet</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Skips inbound events with no data array</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Does not track internal socketio events</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks io.of.emit</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks socket.emit</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks socket.broadcast.emit</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks socket.compress.emit</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker</div><div class="test-title">Tracks socket.volatile.emit</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></div><div id="suite-2" class="suite-container"><div class="suite-info"><div class="suite-path">/home/runner/work/socket.io-prometheus-tracker/socket.io-prometheus-tracker/src/SocketIOPrometheusTracker.singleClient.integration.test.ts</div><div class="suite-time warn">5.414s</div></div><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks socket.broadcast</div><div class="test-status">passed</div><div class="test-duration">0.274s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks socket.compress</div><div class="test-status">passed</div><div class="test-duration">0.256s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks socket.emit</div><div class="test-status">passed</div><div class="test-duration">0.255s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks socket.send</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks socket.to</div><div class="test-status">passed</div><div class="test-duration">0.255s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks socket.volatile</div><div class="test-status">passed</div><div class="test-duration">0.255s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks socket.write</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks io.compress</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks io.emit</div><div class="test-status">passed</div><div class="test-duration">0.264s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks outbound emit to socket with acknowledge function</div><div class="test-status">passed</div><div class="test-duration">0.256s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks io.except</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks io.in</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks io.send</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks io.to</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks io.write</div><div class="test-status">passed</div><div class="test-duration">0.255s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks inbound message from client</div><div class="test-status">passed</div><div class="test-duration">0.255s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks inbound message from client with acknowledge functions</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Single Client)</div><div class="test-title">Tracks inbound message from client with socket id</div><div class="test-status">passed</div><div class="test-duration">0.254s</div></div></div></div></div><div id="suite-3" class="suite-container"><div class="suite-info"><div class="suite-path">/home/runner/work/socket.io-prometheus-tracker/socket.io-prometheus-tracker/src/SocketIOPrometheusTracker.multiClient.integration.test.ts</div><div class="suite-time">1.386s</div></div><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Mutli-Client)</div><div class="test-title">Tracks event sent to room with no members</div><div class="test-status">passed</div><div class="test-duration">0.269s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Mutli-Client)</div><div class="test-title">Tracks event sent to room with single member using `to`</div><div class="test-status">passed</div><div class="test-duration">0.263s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Mutli-Client)</div><div class="test-title">Tracks event sent to room with single member using `in`</div><div class="test-status">passed</div><div class="test-duration">0.257s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">SocketIOPrometheusTracker (Mutli-Client)</div><div class="test-title">Tracks event emitted directly to a client</div><div class="test-status">passed</div><div class="test-duration">0.255s</div></div></div></div></div><div id="suite-4" class="suite-container"><div class="suite-info"><div class="suite-path">/home/runner/work/socket.io-prometheus-tracker/socket.io-prometheus-tracker/src/childHook.unit.test.ts</div><div class="suite-time">0.176s</div></div><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">childHook</div><div class="test-title">Skips if parent property not found</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">childHook</div><div class="test-title">Invokes hook and child function on calling parent if function</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">childHook</div><div class="test-title">Invokes hook and child function on calling parent if non-function</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div></div></div><div id="suite-5" class="suite-container"><div class="suite-info"><div class="suite-path">/home/runner/work/socket.io-prometheus-tracker/socket.io-prometheus-tracker/src/hook.unit.test.ts</div><div class="suite-time">0.148s</div></div><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">hook</div><div class="test-title">Skips trying to hook unfound properties</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">hook</div><div class="test-title">Overwrites the initial object property with a new function</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">hook</div><div class="test-title">Invokes hook and original function on calling object property</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></div><div id="suite-6" class="suite-container"><div class="suite-info"><div class="suite-path">/home/runner/work/socket.io-prometheus-tracker/socket.io-prometheus-tracker/src/getByteSize.unit.test.ts</div><div class="suite-time">0.152s</div></div><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Gets size of string literal</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles null inputs</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles undefined inputs</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles circular-referential objects</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles extended Unicode string literals</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles number literals</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles boolean literals</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles object literals</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles circular arrays</div><div class="test-status">passed</div><div class="test-duration">0s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">getByteSize</div><div class="test-title">Handles NaN</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></div></div></body></html>

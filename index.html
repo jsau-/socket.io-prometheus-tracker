@@ -1,348 +1,186 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>socket.io-prometheus-tracker - v0.0.2</title>
-	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">socket.io-prometheus-tracker - v0.0.2</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
-			<h1> socket.io-prometheus-tracker - v0.0.2</h1>
-		</div>
-	</div>
-</header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#socketio-prometheus-tracker" id="socketio-prometheus-tracker" style="color: inherit; text-decoration: none;">
-					<h1>socket.io-prometheus-tracker</h1>
-				</a>
-				<p><a href="https://www.npmjs.com/package/socket.io-prometheus-tracker"><img src="https://img.shields.io/npm/v/socket.io-prometheus-tracker.svg" alt="npm version"></a>
-					<a href="https://travis-ci.com/jsau-/socket.io-prometheus-tracker"><img src="https://travis-ci.com/jsau-/socket.io-prometheus-tracker.svg?branch=master" alt="Build Status"></a>
-				<a href="https://www.npmjs.com/package/socket.io-prometheus-tracker"><img src="https://img.shields.io/npm/dm/socket.io-prometheus-tracker.svg" alt="npm downloads"></a></p>
-				<p>Track metrics for a Socket.IO server for use in Prometheus.</p>
-				<p><strong><em>Note that by its nature this library relies on monkey-patching the
-							<code>socket.io</code> server instance to hook into functions like <code>socket.emit</code>. Bear
-							this in mind if you&#39;re applying any monkey-patches of your own, and please read
-				the source code to ensure compatibility.</em></strong></p>
-				<p>Library aims:</p>
-				<ul>
-					<li>Cover all Socket.IO events, sent or received.</li>
-					<li><em>Just track metrics</em>. You can do what you want with them - serve via <code>express</code>, periodically write to a file, whatever.</li>
-				</ul>
-				<p>Useful links:</p>
-				<ul>
-					<li><a href="https://jsau-.github.io/socket.io-prometheus-tracker">Documentation</a></li>
-					<li><a href="https://jsau-.github.io/socket.io-prometheus-tracker/coverage/lcov-report">Code Coverage Report</a></li>
-					<li><a href="https://jsau-.github.io/socket.io-prometheus-tracker/test_report.html">Unit Test Report</a></li>
-				</ul>
-				<a href="#contents" id="contents" style="color: inherit; text-decoration: none;">
-					<h1>Contents</h1>
-				</a>
-				<ol>
-					<li><a href="#socket.io-prometheus-tracker">Intro</a></li>
-					<li><a href="#configuration">Configuration</a></li>
-					<li><a href="#metrics">Metrics</a></li>
-					<li><a href="#examples">Examples</a><ul>
-							<li><a href="#basic-use">Basic Use</a></li>
-							<li><a href="#configuring-instances">Configuring Instances</a></li>
-							<li><a href="#express-application">Express Application</a></li>
-						</ul>
-					</li>
-					<li><a href="#contributing">Contributing</a><ul>
-							<li><a href="#useful-snippets">Useful Snippets</a></li>
-						</ul>
-					</li>
-					<li><a href="#feedback-and-support">Feedback and Support</a></li>
-				</ol>
-				<a href="#configuration" id="configuration" style="color: inherit; text-decoration: none;">
-					<h2>Configuration</h2>
-				</a>
-				<p>When instantiating <code>SocketIOPrometheusTracker</code>, you can optionally pass a
-				configuration object. Available parameters are listed below:</p>
-				<table>
-					<thead>
-						<tr>
-							<th align="left">Option</th>
-							<th align="left">Default Value</th>
-							<th align="left">Summary</th>
-						</tr>
-					</thead>
-					<tbody><tr>
-							<td align="left"><code>collectDefaultMetrics</code></td>
-							<td align="left"><code>false</code></td>
-							<td align="left">Should the library also collect metrics recommended by Prometheus. Note that this will increase the number of exposed metrics beyond those listed in <a href="#metrics">Metrics</a>. See: <a href="https://github.com/siimon/prom-client#default-metrics">https://github.com/siimon/prom-client#default-metrics</a> for more details.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>prometheusClient</code></td>
-							<td align="left">undefined</td>
-							<td align="left">An instance of <code>prom-client</code> the library uses to determine the registry for storing metrics. If not provided, the default registry will be used.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>trackSocketId</code></td>
-							<td align="left"><code>false</code></td>
-							<td align="left">Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but does come at the cost of larger metric sizes. Events affected by this value are noted in <a href="#metrics">Metrics</a>.</td>
-						</tr>
-				</tbody></table>
-				<a href="#metrics" id="metrics" style="color: inherit; text-decoration: none;">
-					<h2>Metrics</h2>
-				</a>
-				<table>
-					<thead>
-						<tr>
-							<th align="left">Name</th>
-							<th align="left">Labels</th>
-							<th align="left">Summary</th>
-						</tr>
-					</thead>
-					<tbody><tr>
-							<td align="left"><code>socketio_bytes_received_total</code></td>
-							<td align="left"><code>[&#39;event&#39;, &#39;socketid*&#39;]</code></td>
-							<td align="left">Total number of bytes received by the server.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>socketio_bytes_sent_total</code></td>
-							<td align="left"><code>[&#39;event&#39;]</code></td>
-							<td align="left">Total number of bytes sent by the server.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>socketio_connects_current</code></td>
-							<td align="left"><code>[]</code></td>
-							<td align="left">Current number of clients connected to the server.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>socketio_connects_length</code></td>
-							<td align="left"><code>[&#39;socketid*&#39;]</code></td>
-							<td align="left">The length in seconds of connections to the server.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>socketio_connects_total</code></td>
-							<td align="left"><code>[]</code></td>
-							<td align="left">Total number of connections that have been made to the server.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>socketio_disconnects_total</code></td>
-							<td align="left"><code>[]</code></td>
-							<td align="left">Total number of disconnections from the server.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>socketio_events_received_total</code></td>
-							<td align="left"><code>[&#39;event&#39;, &#39;socketid*&#39;]</code></td>
-							<td align="left">Total number of events received by the server.</td>
-						</tr>
-						<tr>
-							<td align="left"><code>socketio_events_sent_total</code></td>
-							<td align="left"><code>[&#39;event&#39;]</code></td>
-							<td align="left">Total number of events sent by the server.</td>
-						</tr>
-				</tbody></table>
-				<p><sub>* Field <code>socketid</code> will only be included if configuration option <code>trackSocketId</code> is set to <code>true</code>.</sub></p>
-				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-					<h2>Examples</h2>
-				</a>
-				<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
-					<h4>Basic Use</h4>
-				</a>
-				<p>The tracker can be instantiated by passing an instance of a Socket.IO server.</p>
-				<pre><code>const ioPrometheus = <span class="hljs-keyword">new</span> <span class="hljs-constructor">SocketIOPrometheusTracker(<span class="hljs-params">io</span>)</span>;</code></pre><p>Metrics can then be accessed using: <code>ioPrometheus.register.metrics();</code></p>
-				<a href="#configuring-instances" id="configuring-instances" style="color: inherit; text-decoration: none;">
-					<h4>Configuring Instances</h4>
-				</a>
-				<pre><code><span class="hljs-string">const</span> <span class="hljs-string">ioPrometheus</span> <span class="hljs-string">=</span> <span class="hljs-string">new</span> <span class="hljs-string">SocketIOPrometheusTracker(io,</span> <span class="hljs-string">{</span>
-  <span class="hljs-attr">collectDefaultMetrics:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
-  <span class="hljs-attr">trackSocketId:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
-<span class="hljs-string">});</span></code></pre>
-				<a href="#express-application" id="express-application" style="color: inherit; text-decoration: none;">
-					<h4>Express Application</h4>
-				</a>
-				<p>An example project using the library can be found in <code>./examples/express</code>.</p>
-				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
-					<h2>Contributing</h2>
-				</a>
-				<p>While contributions are appreciated, they may be rejected if not in line with
-					the intended project direction. It&#39;s recommended to check before undertaking a
-				major piece of work and/or refactoring.</p>
-				<p>Contributions should be based off the <code>develop</code> branch, and any pull requests
-				made into <code>develop</code>.</p>
-				<p>Pull requests should include a corresponding entry in <code>CHANGELOG.md</code>.</p>
-				<p>Note that this project uses <a href="https://travis-ci.org/">TravisCI</a> for continuous
-				integration. Any pull requests failing automated tests will be rejected.</p>
-				<a href="#useful-snippets" id="useful-snippets" style="color: inherit; text-decoration: none;">
-					<h4>Useful Snippets</h4>
-				</a>
-				<pre><code>// Install dependencies
-npm ci
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>socket.io-prometheus-tracker</title><meta name="description" content="Documentation for socket.io-prometheus-tracker"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">socket.io-prometheus-tracker</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>socket.io-prometheus-tracker</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#socketio-prometheus-tracker" id="socketio-prometheus-tracker" style="color: inherit; text-decoration: none;">
+  <h1>socket.io-prometheus-tracker</h1>
+</a>
+<p><a href="https://www.npmjs.com/package/socket.io-prometheus-tracker"><img src="https://img.shields.io/npm/v/socket.io-prometheus-tracker.svg" alt="npm version"></a>
+[<img src="https://github.com/jsau-/socket.io-prometheus-tracker/actions/workflows/cicd.yml/badge.svg?branch=master" alt="Build Status">]
+<a href="https://www.npmjs.com/package/socket.io-prometheus-tracker"><img src="https://img.shields.io/npm/dm/socket.io-prometheus-tracker.svg" alt="npm downloads"></a></p>
+<p>Track metrics for a Socket.IO server for use in Prometheus.</p>
+<p><em><strong>Note that by its nature this library relies on monkey-patching the
+<code>socket.io</code> server instance to hook into functions like <code>socket.emit</code>. Bear
+this in mind if you&#39;re applying any monkey-patches of your own, and please read
+the source code to ensure compatibility.</strong></em></p>
+<p>Library aims:</p>
+<ul>
+<li>Cover all Socket.IO events in the default namespace, sent or received.</li>
+<li><em>Just track metrics</em>. You can do what you want with them - serve via <code>express</code>, periodically write to a file, whatever.</li>
+</ul>
+<p>Useful links:</p>
+<ul>
+<li><a href="https://jsau-.github.io/socket.io-prometheus-tracker">Documentation</a></li>
+<li><a href="https://jsau-.github.io/socket.io-prometheus-tracker/coverage/lcov-report">Code Coverage Report</a></li>
+<li><a href="https://jsau-.github.io/socket.io-prometheus-tracker/coverage/test_report.html">Unit Test Report</a></li>
+</ul>
 
-// <span class="hljs-keyword">Run</span><span class="bash"> tests</span>
-npm <span class="hljs-keyword">run</span><span class="bash"> check:types</span>
-npm <span class="hljs-keyword">run</span><span class="bash"> lint</span>
-npm <span class="hljs-keyword">run</span><span class="bash"> <span class="hljs-built_in">test</span></span>
+<a href="#contents" id="contents" style="color: inherit; text-decoration: none;">
+  <h1>Contents</h1>
+</a>
+<ol>
+<li><a href="#socket.io-prometheus-tracker">Intro</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#metrics">Metrics</a></li>
+<li><a href="#examples">Examples</a><ul>
+<li><a href="#basic-use">Basic Use</a></li>
+<li><a href="#configuring-instances">Configuring Instances</a></li>
+<li><a href="#express-application">Express Application</a></li>
+</ul>
+</li>
+<li><a href="#contributing">Contributing</a><ul>
+<li><a href="#useful-snippets">Useful Snippets</a></li>
+</ul>
+</li>
+<li><a href="#feedback-and-support">Feedback and Support</a></li>
+</ol>
 
-// Build the library
-npm <span class="hljs-keyword">run</span><span class="bash"> build</span></code></pre>
-				<a href="#feedback-and-support" id="feedback-and-support" style="color: inherit; text-decoration: none;">
-					<h2>Feedback and Support</h2>
-				</a>
-				<p>For suggestions, issues, and/or support raise a GitHub issue!</p>
-			</div>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_metrics_.html">&quot;<wbr>Metrics&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_socketioeventpacket_.html">&quot;<wbr>SocketIOEvent<wbr>Packet&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_socketiotracker_.html">&quot;<wbr>SocketIOTracker&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_socketiotrackeroptions_.html">&quot;<wbr>SocketIOTracker<wbr>Options&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_childhook_.html">&quot;child<wbr>Hook&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_createmetrics_.html">&quot;create<wbr>Metrics&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_getbytesize_.html">&quot;get<wbr>Byte<wbr>Size&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_hook_.html">&quot;hook&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_index_.html">&quot;index&quot;</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
-</body>
-</html>
+<a href="#configuration" id="configuration" style="color: inherit; text-decoration: none;">
+  <h2>Configuration</h2>
+</a>
+<p>When instantiating <code>SocketIOPrometheusTracker</code>, you can optionally pass a
+configuration object. Available parameters are listed below:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Option</th>
+<th align="left">Default Value</th>
+<th align="left">Summary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>collectDefaultMetrics</code></td>
+<td align="left"><code>false</code></td>
+<td align="left">Should the library also collect metrics recommended by Prometheus. Note that this will increase the number of exposed metrics beyond those listed in <a href="#metrics">Metrics</a>. See: <a href="https://github.com/siimon/prom-client#default-metrics">https://github.com/siimon/prom-client#default-metrics</a> for more details.</td>
+</tr>
+<tr>
+<td align="left"><code>prometheusClient</code></td>
+<td align="left">undefined</td>
+<td align="left">An instance of <code>prom-client</code> the library uses to determine the registry for storing metrics. If not provided, the default registry will be used.</td>
+</tr>
+<tr>
+<td align="left"><code>trackSocketId</code></td>
+<td align="left"><code>false</code></td>
+<td align="left">Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but is <strong>not</strong> recommended for use in production. This will lead to the size of the registry growing indefinitely over time. Events affected by this value are noted in <a href="#metrics">Metrics</a>.</td>
+</tr>
+</tbody></table>
+
+<a href="#metrics" id="metrics" style="color: inherit; text-decoration: none;">
+  <h2>Metrics</h2>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Labels</th>
+<th align="left">Summary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>socketio_bytes_received_total</code></td>
+<td align="left"><code>[&#39;event&#39;, &#39;socketid*&#39;]</code></td>
+<td align="left">Total number of bytes received by the server.</td>
+</tr>
+<tr>
+<td align="left"><code>socketio_bytes_sent_total</code></td>
+<td align="left"><code>[&#39;event&#39;]</code></td>
+<td align="left">Total number of bytes sent by the server.</td>
+</tr>
+<tr>
+<td align="left"><code>socketio_connects_current</code></td>
+<td align="left"><code>[]</code></td>
+<td align="left">Current number of clients connected to the server.</td>
+</tr>
+<tr>
+<td align="left"><code>socketio_connects_length</code></td>
+<td align="left"><code>[&#39;socketid*&#39;]</code></td>
+<td align="left">The length in seconds of connections to the server.</td>
+</tr>
+<tr>
+<td align="left"><code>socketio_connects_total</code></td>
+<td align="left"><code>[]</code></td>
+<td align="left">Total number of connections that have been made to the server.</td>
+</tr>
+<tr>
+<td align="left"><code>socketio_disconnects_total</code></td>
+<td align="left"><code>[]</code></td>
+<td align="left">Total number of disconnections from the server.</td>
+</tr>
+<tr>
+<td align="left"><code>socketio_events_received_total</code></td>
+<td align="left"><code>[&#39;event&#39;, &#39;socketid*&#39;]</code></td>
+<td align="left">Total number of events received by the server.</td>
+</tr>
+<tr>
+<td align="left"><code>socketio_events_sent_total</code></td>
+<td align="left"><code>[&#39;event&#39;]</code></td>
+<td align="left">Total number of events sent by the server.</td>
+</tr>
+</tbody></table>
+<p><sub>* Field <code>socketid</code> will only be included if configuration option <code>trackSocketId</code> is set to <code>true</code>.</sub></p>
+
+<a href="#things-to-be-aware-of" id="things-to-be-aware-of" style="color: inherit; text-decoration: none;">
+  <h2>Things to be aware of</h2>
+</a>
+
+<a href="#namespaces" id="namespaces" style="color: inherit; text-decoration: none;">
+  <h3>Namespaces</h3>
+</a>
+<p>Events emitted outbound via the <code>Server</code> instance should be tracked
+successfully regardless of the namespace used. Events emitted outbound
+via a <code>Socket</code> instance are currently only tracked in the default
+namespace.</p>
+<p>The library exports all functions used, so feel free to setup hooks
+against any custom namespaces you want on top of the default behavior.</p>
+
+<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+  <h2>Examples</h2>
+</a>
+
+<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
+  <h4>Basic Use</h4>
+</a>
+<p>The tracker can be instantiated by passing an instance of a Socket.IO server.</p>
+<pre><code><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">ioPrometheus</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-3">SocketIOPrometheusTracker</span><span class="hl-1">(</span><span class="hl-4">io</span><span class="hl-1">);</span>
+</code></pre>
+<p>Metrics can then be accessed using: <code>ioPrometheus.register.metrics();</code></p>
+
+<a href="#configuring-instances" id="configuring-instances" style="color: inherit; text-decoration: none;">
+  <h4>Configuring Instances</h4>
+</a>
+<pre><code><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">ioPrometheus</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-3">SocketIOPrometheusTracker</span><span class="hl-1">(</span><span class="hl-4">io</span><span class="hl-1">, {</span><br/><span class="hl-1">  </span><span class="hl-4">collectDefaultMetrics:</span><span class="hl-1"> </span><span class="hl-0">true</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">trackSocketId:</span><span class="hl-1"> </span><span class="hl-0">true</span><span class="hl-1">,</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#express-application" id="express-application" style="color: inherit; text-decoration: none;">
+  <h4>Express Application</h4>
+</a>
+<p>An example project using the library can be found in <code>./examples/express</code>.</p>
+
+<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+  <h2>Contributing</h2>
+</a>
+<p>While contributions are appreciated, they may be rejected if not in line with
+the intended project direction. It&#39;s recommended to check before undertaking a
+major piece of work and/or refactoring.</p>
+<p>Contributions should be based off the <code>develop</code> branch, and any pull requests
+made into <code>develop</code>.</p>
+<p>Pull requests should include a corresponding entry in <code>CHANGELOG.md</code>.</p>
+
+<a href="#useful-snippets" id="useful-snippets" style="color: inherit; text-decoration: none;">
+  <h4>Useful Snippets</h4>
+</a>
+<pre><code><span class="hl-6">// Install dependencies</span><br/><span class="hl-4">npm</span><span class="hl-1"> </span><span class="hl-4">ci</span><br/><br/><span class="hl-6">// Run tests</span><br/><span class="hl-4">npm</span><span class="hl-1"> </span><span class="hl-4">run</span><span class="hl-1"> </span><span class="hl-7">check</span><span class="hl-1">:</span><span class="hl-4">types</span><br/><span class="hl-4">npm</span><span class="hl-1"> </span><span class="hl-4">run</span><span class="hl-1"> </span><span class="hl-4">lint</span><br/><span class="hl-4">npm</span><span class="hl-1"> </span><span class="hl-4">run</span><span class="hl-1"> </span><span class="hl-4">test</span><br/><br/><span class="hl-6">// Build the library</span><br/><span class="hl-4">npm</span><span class="hl-1"> </span><span class="hl-4">run</span><span class="hl-1"> </span><span class="hl-4">build</span>
+</code></pre>
+
+<a href="#feedback-and-support" id="feedback-and-support" style="color: inherit; text-decoration: none;">
+  <h2>Feedback and Support</h2>
+</a>
+<p>For suggestions, issues, and/or support raise a GitHub issue!</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/SocketIOPrometheusTracker.html" class="tsd-kind-icon">SocketIOPrometheus<wbr/>Tracker</a></li><li class="tsd-kind-interface"><a href="interfaces/Metrics.html" class="tsd-kind-icon">Metrics</a></li><li class="tsd-kind-interface"><a href="interfaces/SocketIOTrackerOptions.html" class="tsd-kind-icon">SocketIOTracker<wbr/>Options</a></li><li class="tsd-kind-function"><a href="modules.html#childHook" class="tsd-kind-icon">child<wbr/>Hook</a></li><li class="tsd-kind-function"><a href="modules.html#createMetrics" class="tsd-kind-icon">create<wbr/>Metrics</a></li><li class="tsd-kind-function"><a href="modules.html#getByteSize" class="tsd-kind-icon">get<wbr/>Byte<wbr/>Size</a></li><li class="tsd-kind-function"><a href="modules.html#hook" class="tsd-kind-icon">hook</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
