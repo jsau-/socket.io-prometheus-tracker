@@ -5,9 +5,9 @@ module.exports = {
   collectCoverageFrom: ['./src/**/*.+(ts)', '!./src/index.ts'],
   coverageThreshold: {
     global: {
-      branches: 75,
-      functions: 75,
-      lines: 75,
+      branches: 95,
+      functions: 95,
+      lines: 95,
       statements: -1,
     },
   },
@@ -20,7 +20,7 @@ module.exports = {
     [
       './node_modules/jest-html-reporter',
       {
-        outputPath: 'docs/test_report.html',
+        outputPath: 'coverage/test_report.html',
         pageTitle: 'Test Report',
       },
     ],

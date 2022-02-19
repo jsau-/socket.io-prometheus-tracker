@@ -1,7 +1,7 @@
 # socket.io-prometheus-tracker
 
 [![npm version](https://img.shields.io/npm/v/socket.io-prometheus-tracker.svg)](https://www.npmjs.com/package/socket.io-prometheus-tracker)
-[![Build Status](https://travis-ci.com/jsau-/socket.io-prometheus-tracker.svg?branch=master)](https://travis-ci.com/jsau-/socket.io-prometheus-tracker)
+[![Build Status](https://github.com/jsau-/socket.io-prometheus-tracker/actions/workflows/cicd.yml/badge.svg?branch=master)]
 [![npm downloads](https://img.shields.io/npm/dm/socket.io-prometheus-tracker.svg)](https://www.npmjs.com/package/socket.io-prometheus-tracker)
 
 Track metrics for a Socket.IO server for use in Prometheus.
@@ -12,13 +12,13 @@ this in mind if you're applying any monkey-patches of your own, and please read
 the source code to ensure compatibility.***
 
 Library aims:
-* Cover all Socket.IO events, sent or received.
+* Cover all Socket.IO events in the default namespace, sent or received.
 * _Just track metrics_. You can do what you want with them - serve via `express`, periodically write to a file, whatever.
 
 Useful links:
 * [Documentation](https://jsau-.github.io/socket.io-prometheus-tracker)
 * [Code Coverage Report](https://jsau-.github.io/socket.io-prometheus-tracker/coverage/lcov-report)
-* [Unit Test Report](https://jsau-.github.io/socket.io-prometheus-tracker/test_report.html)
+* [Unit Test Report](https://jsau-.github.io/socket.io-prometheus-tracker/coverage/test_report.html)
 
 # Contents
 1. [Intro](#socket.io-prometheus-tracker)
@@ -41,7 +41,7 @@ Option | Default Value | Summary
 :--- | :--- | :---
 `collectDefaultMetrics` | `false` | Should the library also collect metrics recommended by Prometheus. Note that this will increase the number of exposed metrics beyond those listed in [Metrics](#metrics). See: https://github.com/siimon/prom-client#default-metrics for more details.
 `prometheusClient` | undefined | An instance of `prom-client` the library uses to determine the registry for storing metrics. If not provided, the default registry will be used.
-`trackSocketId` | `false` | Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but does come at the cost of larger metric sizes. Events affected by this value are noted in [Metrics](#metrics).
+`trackSocketId` | `false` | Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but is **not** recommended for use in production. This will lead to the size of the registry growing indefinitely over time. Events affected by this value are noted in [Metrics](#metrics).
 
 ## Metrics
 
@@ -58,6 +58,17 @@ Name | Labels | Summary
 
 <sub>* Field `socketid` will only be included if configuration option `trackSocketId` is set to `true`.</sub>
 
+## Things to be aware of
+
+### Namespaces
+
+Events emitted outbound via the `Server` instance should be tracked
+successfully regardless of the namespace used. Events emitted outbound
+via a `Socket` instance are currently only tracked in the default
+namespace.
+
+The library exports all functions used, so feel free to setup hooks
+against any custom namespaces you want on top of the default behavior.
 
 ## Examples
 
@@ -94,9 +105,6 @@ Contributions should be based off the `develop` branch, and any pull requests
 made into `develop`.
 
 Pull requests should include a corresponding entry in `CHANGELOG.md`.
-
-Note that this project uses [TravisCI](https://travis-ci.org/) for continuous
-integration. Any pull requests failing automated tests will be rejected.
 
 #### Useful Snippets
 

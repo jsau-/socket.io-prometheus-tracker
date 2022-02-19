@@ -27,14 +27,12 @@ chrome-user-data
 *.swo
 
 # Repository files to not bundle
-.babelrc
 .esdoc.json
 .eslintignore
 .eslintrc.js
 .gitattributes
 .gitignore
 .prettierrc.json
-.travis.yml
 CHANGELOG.md
 jest.config.js
 LICENSE
@@ -47,3 +45,4 @@ docs/**/*
 examples/**/*
 test/**/*
 examples/**/*
+.github/**/*

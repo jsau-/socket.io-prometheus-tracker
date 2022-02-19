@@ -8,12 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release
+- GitHub actions workflow files for CI/CD | PR#23
 
 ### Changed
+
+- Increase compatible version of `socket.io` to `4.4.1` | PR#22
 
 ### Deprecated
 
 ### Fixed
 
 ### Removed
+
+- TravisCI config YML | PR#23
