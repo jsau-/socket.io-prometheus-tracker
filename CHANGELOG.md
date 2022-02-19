@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Increase compatible version of `socket.io` to `4.4.1` | PR#22
+
 ### Deprecated
 
 ### Fixed
