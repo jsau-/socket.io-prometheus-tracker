@@ -113,7 +113,6 @@ Pull requests should include a corresponding entry in `CHANGELOG.md`.
 npm ci
 
 // Run tests
-npm run check:types
 npm run lint
 npm run test
 
