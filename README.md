@@ -1,7 +1,7 @@
 # socket.io-prometheus-tracker
 
 [![npm version](https://img.shields.io/npm/v/socket.io-prometheus-tracker.svg)](https://www.npmjs.com/package/socket.io-prometheus-tracker)
-[![Build Status](https://github.com/jsau-/socket.io-prometheus-tracker/actions/workflows/cicd.yml/badge.svg?branch=master)]
+[![build status](https://github.com/jsau-/socket.io-prometheus-tracker/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/jsau-/socket.io-prometheus-tracker/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/socket.io-prometheus-tracker.svg)](https://www.npmjs.com/package/socket.io-prometheus-tracker)
 
 Track metrics for a Socket.IO server for use in Prometheus.
