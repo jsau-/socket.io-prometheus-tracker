@@ -4,7 +4,7 @@ on:
   schedule:
     - cron:  '0 0 * * *'
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,7 +20,7 @@ jobs:
       run: npm ci --ignore-scripts
     - name: Lint
       run: npm run lint
-    - name: Compile
-      run: npm run build
     - name: Test
       run: npm test
+    - name: Compile
+      run: npm run build
