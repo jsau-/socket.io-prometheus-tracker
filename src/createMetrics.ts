@@ -2,10 +2,11 @@ import { Counter, Gauge, Histogram } from 'prom-client';
 import { Metrics } from './Metrics';
 
 /**
- * @fileoverview Function for generating default metrics for the library.
+ * Function for generating default metrics for the library.
+ *
  * @returns Metric configuration for the library.
  */
-export function createMetrics(): Metrics {
+export const createMetrics = (): Metrics => {
   return {
     bytesReceivedTotal: new Counter({
       help: 'Total number of bytes received by the server.',

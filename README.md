@@ -12,7 +12,7 @@ this in mind if you're applying any monkey-patches of your own, and please read
 the source code to ensure compatibility.***
 
 Library aims:
-* Cover all Socket.IO events, sent or received.
+* Cover all Socket.IO events in the default namespace, sent or received.
 * _Just track metrics_. You can do what you want with them - serve via `express`, periodically write to a file, whatever.
 
 Useful links:
@@ -41,7 +41,7 @@ Option | Default Value | Summary
 :--- | :--- | :---
 `collectDefaultMetrics` | `false` | Should the library also collect metrics recommended by Prometheus. Note that this will increase the number of exposed metrics beyond those listed in [Metrics](#metrics). See: https://github.com/siimon/prom-client#default-metrics for more details.
 `prometheusClient` | undefined | An instance of `prom-client` the library uses to determine the registry for storing metrics. If not provided, the default registry will be used.
-`trackSocketId` | `false` | Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but does come at the cost of larger metric sizes. Events affected by this value are noted in [Metrics](#metrics).
+`trackSocketId` | `false` | Should a label be included for additionally tracking the socket id where appropriate. This may be useful for debugging, but is **not** recommended for use in production. This will lead to the size of the registry growing indefinitely over time. Events affected by this value are noted in [Metrics](#metrics).
 
 ## Metrics
 
@@ -58,6 +58,17 @@ Name | Labels | Summary
 
 <sub>* Field `socketid` will only be included if configuration option `trackSocketId` is set to `true`.</sub>
 
+## Things to be aware of
+
+### Namespaces
+
+Events emitted outbound via the `Server` instance should be tracked
+successfully regardless of the namespace used. Events emitted outbound
+via a `Socket` instance are currently only tracked in the default
+namespace.
+
+The library exports all functions used, so feel free to setup hooks
+against any custom namespaces you want on top of the default behavior.
 
 ## Examples
 
