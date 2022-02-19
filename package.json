@@ -1,6 +1,6 @@
 {
   "name": "socket.io-prometheus-tracker",
-  "version": "0.0.3-alpha.1",
+  "version": "0.0.3-alpha.2",
   "description": "Prometheus metrics tracker for socket.io servers.",
   "main": "./build/index.js",
   "scripts": {
