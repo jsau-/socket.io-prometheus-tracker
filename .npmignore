@@ -33,11 +33,8 @@ chrome-user-data
 .gitattributes
 .gitignore
 .prettierrc.json
-CHANGELOG.md
 jest.config.js
-LICENSE
 package-lock.json
-README.md
 tsconfig.json
 tsconfig.dist.json
 typedoc.js
