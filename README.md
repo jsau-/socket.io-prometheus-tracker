@@ -18,7 +18,7 @@ Library aims:
 Useful links:
 * [Documentation](https://jsau-.github.io/socket.io-prometheus-tracker)
 * [Code Coverage Report](https://jsau-.github.io/socket.io-prometheus-tracker/coverage/lcov-report)
-* [Unit Test Report](https://jsau-.github.io/socket.io-prometheus-tracker/test_report.html)
+* [Unit Test Report](https://jsau-.github.io/socket.io-prometheus-tracker/coverage/test_report.html)
 
 # Contents
 1. [Intro](#socket.io-prometheus-tracker)
