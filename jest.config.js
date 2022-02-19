@@ -3,6 +3,14 @@ module.exports = {
   clearMocks: true,
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.+(ts)', '!./src/index.ts'],
+  coverageThreshold: {
+    global: {
+      branches: 95,
+      functions: 95,
+      lines: 95,
+      statements: -1,
+    },
+  },
   errorOnDeprecated: true,
   maxConcurrency: 1,
   notify: true,

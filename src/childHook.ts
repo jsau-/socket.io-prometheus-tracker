@@ -3,11 +3,12 @@
 import { hook } from './hook';
 
 /**
- * @fileoverview Helper function for applying hooks to nested properties of an
- * object. Useful for nested Socket.IO emit methods, eg. `io.to('room').emit`,
- * or `socket.volatile.emit`. Note that because these methods can either be
+ * Helper function for applying hooks to nested properties of an object. Useful
+ * for nested Socket.IO emit methods, eg. `io.to('room').emit`, or
+ * `socket.volatile.emit`. Note that because these methods can either be
  * properties on an object literal, or properties set on the result of a
  * function call we have to take some extra steps.
+ *
  * @param objectToHook - The object to apply a hook to. This should be an
  * object with properties that are either functions generating objects, or
  * objects themselves.
@@ -49,12 +50,12 @@ import { hook } from './hook';
  * exampleObject.parentPropertyTwo.childPropertyTwo();
  * ```
  */
-export function childHook(
+export const childHook = (
   objectToHook: any,
   parentProperty: string,
   childMethodToHook: string,
   hookFunc: (...args: any[]) => unknown,
-): void {
+): void => {
   if (!objectToHook[parentProperty]) {
     return;
   }

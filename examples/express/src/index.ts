@@ -16,7 +16,7 @@ const io = new Server(http, {
 const otherNamespaceName = '/other-namespace';
 const otherNamespace = io.of(otherNamespaceName);
 
-const ioPrometheus = new SocketIOPrometheusTracker(io, { collectDefaultMetrics: true, trackSocketId: true });
+const ioPrometheus = new SocketIOPrometheusTracker(io, { collectDefaultMetrics: true });
 
 const eventHandlers = (socket: Socket) => {
   socket.on('join-room', () => {
@@ -89,4 +89,16 @@ const server = http.listen(port, function() {
   });
 
   clientOneOtherNamespace.on('connect', clientOneOtherNamespace.disconnect);
+
+  setInterval(() => {
+    const immediateDisconnectClient = socketIOClient(`http://localhost:${port}`, {
+      forceNew: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 4000,
+      reconnectionDelayMax: 5000,
+    });
+
+    immediateDisconnectClient.on('connect', immediateDisconnectClient.disconnect);
+  }, 500);
 });

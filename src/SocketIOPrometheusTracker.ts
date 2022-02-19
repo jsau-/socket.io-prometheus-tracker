@@ -7,11 +7,29 @@ import { childHook } from './childHook';
 import { hook } from './hook';
 
 export interface SocketIOTrackerOptions {
+  /**
+   * Should the library also collect metrics recommended by Prometheus. Note
+   * that this will increase the number of exposed metrics.
+   *
+   * @see https://github.com/siimon/prom-client#default-metrics
+   */
   collectDefaultMetrics?: boolean;
+  /**
+   * An instance of `prom-client` the library uses to determine the registry for
+   * storing metrics. If not provided, the default registry will be used.
+   *
+   * @see https://github.com/siimon/prom-client
+   */
   prometheusClient?: Pick<
     typeof PromClient,
     'register' | 'collectDefaultMetrics'
   >;
+  /**
+   * Should a label be included for additionally tracking the socket id where
+   * appropriate. This may be useful for debugging, but is **not** recommended
+   * for use in production. This will lead to the size of the registry growing
+   * indefinitely over time.
+   */
   trackSocketId?: boolean;
 }
 
@@ -37,16 +55,20 @@ const EVENTS_TO_IGNORE = [
   'pong',
 ];
 
-/**
- * @fileoverview Bootstrap relevant hooks into a Socket.IO server instance,
- * and track metrics over time.
- */
 export class SocketIOPrometheusTracker {
   public metrics: Metrics;
   private options: SocketIOTrackerOptions;
   public register: PromClient.Registry;
 
   /**
+   * When instantiated with a `socket.io` server instance, monkey-patch methods
+   * on it to apply hooks before sending outbound events, or on receiving
+   * inbound events, gathering statistics to be exposed for use in
+   * Prometheus.
+   *
+   * @see https://github.com/siimon/prom-client
+   * @see https://github.com/socketio/socket.io
+   *
    * @param ioServer - The Socket.IO server instance to track metrics for.
    * @param options - Optional configuration parameters for the tracker
    * instance.
@@ -138,7 +160,7 @@ export class SocketIOPrometheusTracker {
 
       childHook(socket, 'to', 'emit', this.hookOutboundEvent);
 
-      /**
+      /*
        * Track all inbound websocket events (regardless if there's an explicit
        * handler setup for it or not).
        *

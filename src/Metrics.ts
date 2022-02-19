@@ -1,7 +1,7 @@
 import { Counter, Gauge, Histogram } from 'prom-client';
 
 /**
- * @fileoverview Metrics exposed by the library.
+ * Metrics exposed by the library.
  */
 export interface Metrics {
   bytesReceivedTotal: Counter<'event' | 'socketid'>;
