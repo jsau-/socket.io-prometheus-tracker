@@ -1,4 +1,4 @@
-name: SocketIOPrometheusTracker CI/CD
+name: Pull Request
 on:
   pull_request:
 jobs:
@@ -19,12 +19,6 @@ jobs:
     - name: Lint
       run: npm run lint
     - name: Test
-      run: npm test
+      run: npm run test
     - name: Compile
       run: npm run build
-  deploy:
-    runs-on: ubuntu-latest
-    if: success() && github.ref == 'refs/heads/master'
-    steps:
-    - name: Foo
-      run: echo Foo
