@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "socket.io": "^4.4.1",
+    "socket.io": "^4.5.3",
     "socket.io-client": "^4.4.1",
     "socket.io-prometheus-tracker": "file:../../"
   },
