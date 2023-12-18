@@ -20,10 +20,7 @@ export interface SocketIOTrackerOptions {
    *
    * @see https://github.com/siimon/prom-client
    */
-  prometheusClient?: Pick<
-    typeof PromClient,
-    'register' | 'collectDefaultMetrics'
-  >;
+  prometheusClient?: typeof PromClient;
   /**
    * Should a label be included for additionally tracking the socket id where
    * appropriate. This may be useful for debugging, but is **not** recommended
