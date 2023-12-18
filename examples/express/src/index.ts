@@ -1,4 +1,5 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
+import * as PromClient from 'prom-client';
 import { Server, Socket } from 'socket.io';
 import socketIOClient from 'socket.io-client';
 import { SocketIOPrometheusTracker } from 'socket.io-prometheus-tracker';
@@ -43,9 +44,9 @@ otherNamespace.on('connect', eventHandlers);
 /**
  * Expose metrics via API endpoint
  */
-app.get('/metrics', (req, res) => {
-  const metrics = ioPrometheus.register.metrics();
-  return res.send(metrics);
+app.get('/metrics', async (req, res) => {
+  const metrics = await ioPrometheus.register.metrics();
+  return res.contentType('text/plain').send(metrics);
 });
 
 /**
