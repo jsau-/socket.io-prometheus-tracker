@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Set minimum version of `prom-client` to `^15.0.0` | PR#45
+
+## [0.0.3-alpha.3]
+
+### Changed
+
 - Reduce compatible version of `socket.io` to `^4.0.0` | PR#28
 
 ## [0.0.3-alpha.1]
